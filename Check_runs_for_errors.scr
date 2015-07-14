@@ -1,0 +1,28 @@
+#!/bin/tcsh
+
+set RS = $1 # Run start number
+set RE = $2 # Run end number
+set SITE = $3 # Site ID (i.e. SNQ)
+
+set Basedir = /home/wayandn/summa/output/
+set outfile = $Basedir$SITE'/Last_error_summary.txt'
+
+rm -f $outfile 
+
+# For each run output directory (i.e. R_3)
+while ( $RS <= $RE )
+echo Processing Run $RS
+echo Processing Run $RS >> $outfile
+
+set Curdir  = $Basedir$SITE/R_$RS/
+
+echo `awk '/ERROR/' $Curdir'Run_output.txt'`
+awk '/ERROR/' $Curdir'Run_output.txt' >> $outfile 
+
+
+@ RS++
+
+end 
+
+echo Done searching for errors check $outfile
+
