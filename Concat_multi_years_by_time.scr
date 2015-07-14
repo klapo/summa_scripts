@@ -1,51 +1,24 @@
 #!/bin/tcsh
 
+# User Input
 set RS = $1 # Run start number
-#set RE = $2 # Run end number
 set SITE = $2 # Site ID (i.e. SNQ)
 set expname = $3 # Experiment name
 
-#set files2concat=''
 
-# For each run output directory (i.e. R_3)
-#while ( $RS <= $RE )
 echo Processing Run $RS
 
+# User Define path to SUMMA output
 set Basedir = /home/wayandn/summa/output/
+# Assumes output is structured in output/Sitename/R_[Run number here]/
 set Curdir  = $Basedir$SITE/R_$RS/
 echo $Curdir
 
+# Ignores all spin up files
 cd $Curdir
 set files2concat = `ls --ignore='*spinup*' --ignore='*.txt'`
 
-# Get file
-#set origF = $SITE'_R_'$RS'_spinup'$expname'.nc'
-#echo $origF
-# Add new dimension
-#ncecat -O -u param $Curdir$origF $Curdir'temp1.nc'
-#echo added new dimension
-
-# Make it the record dimension
-#ncks -O --mk_rec_dmn param $Curdir'temp1.nc' $Curdir'temp2.nc'
-#echo made it the record
-
-# Save filenames to concatenat
-#set files2concat = find $Curdir -type f -printf "%f\n"
-
 echo $files2concat
-
-
-#set files2concat = "$files2concat {$Curdir}{$origF}"
-
-# Clean up
-#rm -f $Curdir'temp1.nc'
-
-#@ RS++
-
-#end 
-
-# Now make param the record dimension (for use with Matlab scripts that expect multple param dimensions)
-
 
 echo Done adding records for all netcdf files 
 echo $files2concat
@@ -69,3 +42,4 @@ echo made param the record dimension
 
 # Clean up
 rm -f $Basedir$SITE'/'$expname'/temp1.nc'
+

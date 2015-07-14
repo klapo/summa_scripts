@@ -53,7 +53,7 @@ jobrun = 1 # 1 = Command line, 2 = Queue
 # Code
 #####################################################################################
 
-# Define Paths
+# Define User Paths
 home_dir = "/home/wayandn/"
 main_dir = home_dir + "summa/"
 settings_dir = main_dir + "settings/"

@@ -50,15 +50,19 @@ def my_range(start, end, step):
 # Define Multi-run Info - Check all 6 Required Inputs!
 #####################################################################################
 
-# Define Paths
+# Define User main path to SUMMA directory
 main_dir = "/home/wayandn/summa/"
+
+# Set up other paths (check your file structure is the same)
 settings_dir = main_dir + "settings/"
 input_dir    = main_dir + "input/"
 output_dir   = main_dir + "output/"
 run_exe = main_dir + "bin/summa.exe"
 
 # 1) Run IDs
+# a) Define a range of values
 #Run_IDs = my_range(20,30,1);
+# b) Define one number
 Run_IDs = [2];
 
 # 2) Define Sites to Use
@@ -160,11 +164,6 @@ spatial_gw         =       'localColumn'  #! (F-21) choice of method for the spa
 subRouting         =          'timeDlay'  #! (F-22) choice of method for sub-grid routing
 
 Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thermlcond,spatial_gw,subRouting];
-
-
-# Checks
-#if not NIDs==(NPruns*NSites):
-#    sys.exit("Number of Run_IDs must equal NPruns")
 
 #####################################################################################
 # Loop through each Site (Index from zero)
