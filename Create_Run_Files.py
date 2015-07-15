@@ -24,11 +24,12 @@ import Create_new
 #
 # Run_IDs				- Number values for new created run files (i.e R_46)
 # Site_ID_all				- Names of all sites to be included, same as site folder names, (Requires Input, Settings, and output folder set up)
-# new_param_all				- Paramter names to vary, (From /settings/snow_zParamInfo.txt)
-# N_param_itr				- Number of values to vary each paramter, (divided evenly between min and max, defined in snow_zParamInfo.txt)
+# new_param_all				- Paramter names to vary, (From /settings/summa_zParamInfo.txt)
+# N_param_itr				- Number of values to vary each paramter, (divided evenly between min and max, defined in summa_zParamInfo.txt)
 #
 ## File Info ##
 # Created 1/8/2013 - Nic Wayand (nicway@u.washington.edu)
+# See github log for complete history https://github.com/NicWayand/summa_scripts
 ####################################################################################
 
 def my_range(start, end, step):
@@ -57,13 +58,13 @@ main_dir = "/home/wayandn/summa/"
 settings_dir = main_dir + "settings/"
 input_dir    = main_dir + "input/"
 output_dir   = main_dir + "output/"
-run_exe = main_dir + "bin/summa.exe"
+run_exe      = main_dir + "bin/summa.exe"
 
 # 1) Run IDs
 # a) Define a range of values
 #Run_IDs = my_range(20,30,1);
 # b) Define one number
-Run_IDs = [2];
+Run_IDs = [5];
 
 # 2) Define Sites to Use
 Site_ID_all = ["SNQ_ALL"]
@@ -85,12 +86,12 @@ Site_ID_all = ["SNQ_ALL"]
 #dateend   = "2011-07-31 22:00"
 
 # SNQ_ALL
-#datestart = "2012-10-01 00:00"
-#dateend   = "2015-05-11 21:30"
+datestart = "2012-10-01 00:00"
+dateend   = "2015-05-11 21:30"
 
 # SNQ_ALL Historic
-datestart = "1989-12-26 00:00"
-dateend   = "2012-10-01 00:00"
+#datestart = "1988-12-26 00:00"
+#dateend   = "2012-10-01 00:00"
 
 
 # SNQ14C
@@ -113,19 +114,11 @@ dateend   = "2012-10-01 00:00"
 #print Site_ID_all
 
 # 4) Define Parameters to modify from default values and Define values for each new_param_all
-# SNQ or SNQ14C
+# SNQ
 new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth', 'zmax'] #,'theta_sat', 'theta_res',  'vGn_alpha',  'vGn_n','k_soil']
 new_param_val = [           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1] #,          0.401,     0.136,          -0.84,    1.30,   0.0015]
 
-# MFS
-#new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI']
-#new_param_val = [          0.4,             0.001,               1]
-
-# LNF
-#new_param_all = ['z0Snow','tempCritRain','heightCanopyTop','heightCanopyBottom','winterSAI']
-#new_param_val = [1,               273.14,          0.2,             0.01,               1]
-
-# 5) Define which paramter to allow to vary (between min and max in snow_zLocalParamInfo) Note: this overwrites the value given in new_param_val.
+# 5) Define which paramter to allow to vary (between min and max in summa_zLocalParamInfo) Note: this overwrites the value given in new_param_val.
 param_2_vary  = 'mw_exp' 
 
 
@@ -135,35 +128,36 @@ NSites = len(Site_ID_all)
 
 # 6) Define Process/Methods to change from current
 
-soilCatTbl         =           'ROSETTA'  #! (N-01) soil-category dateset
-vegeParTbl         =              'USGS'  #! (N-02) vegetation category dataset
-soilStress         =          'NoahType'  #! (N-03) choice of function for the soil moisture control on stomatal resistance
-stomResist         =         'BallBerry'  #! (N-04) choice of function for stomatal resistance
+soilCatTbl         =           'ROSETTA'  #! (03) soil-category dateset
+vegeParTbl         =              'USGS'  #! (04) vegetation category dataset
+soilStress         =          'NoahType'  #! (05) choice of function for the soil moisture control on stomatal resistance
+stomResist         =         'BallBerry'  #! (06) choice of function for stomatal resistance
 #! ***********************************************************************************************************************
-num_method         =          'itertive'  #! (F-01) choice of numerical method
-fDerivMeth         =          'analytic'  #! (F-02) method used to calculate flux derivatives
-LAI_method         =         'specified'  #! (F-03) method used to determine LAI and SAI
-f_Richards         =          'mixdform'  #! (F-04) form of Richard's equation
-groundwatr         =          'noXplict'  #! (F-05) choice of groundwater parameterization
-hc_profile         =          'pow_prof'  #! (F-06) choice of hydraulic conductivity profile
-bcUpprTdyn         =          'nrg_flux'  #! (F-07) type of upper boundary condition for thermodynamics
-bcLowrTdyn         =          'zeroFlux'  #! (F-08) type of lower boundary condition for thermodynamics
-bcUpprSoiH         =          'liq_flux'  #! (F-09) type of upper boundary condition for soil hydrology
-bcLowrSoiH         =          'drainage'  #! (F-10) type of lower boundary condition for soil hydrology
-veg_traits         =      'CM_QJRMS1998'  #! (F-11) choice of parameterization for vegetation roughness length and displacement height
-canopyEmis         =          'simplExp'  #! (F-12) choice of parameterization for canopy emissivity
-snowIncept         =         'lightSnow'  #! (F-13) choice of parameterization for snow interception
-windPrfile         =    'logBelowCanopy'  #! (F-14) choice of wind profile through the canopy
-astability         =          'mahrtexp'  #! (F-15) choice of stability function
-canopySrad         =       'CLM_2stream'  #! (F-16) choice of canopy shortwave radiation method
-alb_method         =          'varDecay'  #! (F-17) choice of albedo representation
-compaction         =          'anderson'  #! (F-18) choice of compaction routine
-snowLayers         =          'jrdn1991'  #! (F-19) choice of method to combine and sub-divide snow layers
-thermlcond         =          'jrdn1991'  #! (F-20) choice of thermal conductivity representation
-spatial_gw         =       'localColumn'  #! (F-21) choice of method for the spatial representation of groundwater
-subRouting         =          'timeDlay'  #! (F-22) choice of method for sub-grid routing
+num_method         =          'itertive'  #! (07) choice of numerical method
+fDerivMeth         =          'analytic'  #! (08) method used to calculate flux derivatives
+LAI_method         =         'specified'  #! (09) method used to determine LAI and SAI
+f_Richards         =          'mixdform'  #! (10) form of Richard's equation
+groundwatr         =          'noXplict'  #! (11) choice of groundwater parameterization
+hc_profile         =          'pow_prof'  #! (12) choice of hydraulic conductivity profile
+bcUpprTdyn         =          'nrg_flux'  #! (13) type of upper boundary condition for thermodynamics
+bcLowrTdyn         =          'zeroFlux'  #! (14) type of lower boundary condition for thermodynamics
+bcUpprSoiH         =          'liq_flux'  #! (15) type of upper boundary condition for soil hydrology
+bcLowrSoiH         =          'drainage'  #! (16) type of lower boundary condition for soil hydrology
+veg_traits         =      'CM_QJRMS1998'  #! (17) choice of parameterization for vegetation roughness length and displacement height
+canopyEmis         =          'simplExp'  #! (18) choice of parameterization for canopy emissivity
+snowIncept         =         'lightSnow'  #! (19) choice of parameterization for snow interception
+windPrfile         =    'logBelowCanopy'  #! (20) choice of wind profile through the canopy
+astability         =          'mahrtexp'  #! (21) choice of stability function
+canopySrad         =       'CLM_2stream'  #! (22) choice of canopy shortwave radiation method
+alb_method         =          'varDecay'  #! (23) choice of albedo representation
+compaction         =          'anderson'  #! (24) choice of compaction routine
+snowLayers         =          'jrdn1991'  #! (25) choice of method to combine and sub-divide snow layers
+thCondSnow         =          'jrdn1991'  #! (26) choice of thermal conductivity representation for snow
+thCondSoil         =        'mixConstit'  #! (27) choice of thermal conductivity representation for soil
+spatial_gw         =       'localColumn'  #! (28) choice of method for the spatial representation of groundwater
+subRouting         =          'timeDlay'  #! (29) choice of method for sub-grid routing
 
-Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thermlcond,spatial_gw,subRouting];
+Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thCondSnow,thCondSoil,spatial_gw,subRouting];
 
 #####################################################################################
 # Loop through each Site (Index from zero)
@@ -207,14 +201,9 @@ while (cSite < NSites):
         # Make needed directories
         if not os.path.exists(c_output_dir):
             os.makedirs(c_output_dir)
-#        else:
-#            sys.exit("This Run ID already exits, pick a new one")
 
 	if not os.path.exists(c_settings_dir):
             os.makedirs(c_settings_dir)
- #       else:
- #           sys.exit("This Run ID already exits, pick a new one")
-
 
         ## Now create 5 needed files for current Run ID
 
@@ -241,3 +230,4 @@ while (cSite < NSites):
     cSite += 1
     
 # End of all Sites
+

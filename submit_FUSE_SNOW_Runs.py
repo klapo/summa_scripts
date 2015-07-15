@@ -39,12 +39,12 @@ import Create_new
 Site_ID_all = ["SNQ_ALL"]
 
 # 2) Run ID
-Run_IDs = [1] #,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]
+Run_IDs = [5] #,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]
 #Run_IDs = range(1,229)
 #Run_IDs = range(1,364)
 
 # 3) Experiment Name
-exp_name = "TEST"
+exp_name = "Check_scripts"
 
 # 4) Run on Command line or in Queue?
 jobrun = 1 # 1 = Command line, 2 = Queue
@@ -88,10 +88,10 @@ while (cSite < NSites):
         
         # Define paths
         cRID_char = "R_" + str(Run_IDs[cRID])
-        c_fileManager    = settings_dir + c_Site_ID + "/" + cRID_char + "/snow_fileManager_" + c_Site_ID + ".txt"
+        c_fileManager    = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_fileManager_" + c_Site_ID + ".txt"
         c_output_dir     = output_dir + c_Site_ID + "/" + cRID_char
         run_output       = c_output_dir + "/Run_output.txt"
-        
+        print c_fileManager 
         # Check Run files exists
         if not os.path.exists(c_fileManager):
              sys.exit("Run ID %s for site %s doesn't exist" % (cRID_char,c_Site_ID))
