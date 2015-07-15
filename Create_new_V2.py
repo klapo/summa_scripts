@@ -4,7 +4,7 @@ import shutil
 import re
 import sys
 import numpy
-
+from Create_run import pbs
 
 
 # Created 01/07/2013 - Nic Wayand (nicway@u.washington.edu)
@@ -221,36 +221,4 @@ def ParamTrial(new_param_all,new_param_val,param_2_vary,NPruns,settings_dir,c_Si
     print "Finished creating new summa_zParamTrial file"
 
     return
-          
-# Create pbs.cmd file for qsub summission
-def pbs(exp_name,c_fileManager,run_output,cRID_char):
-
-    # Directories
-    new_file = "/home/wayandn/pbs.cmd"
-
-    # Open file for writing
-    fin = open(new_file,"w")
-
-    # Write to file
-    fin.write("#!/bin/sh\n"
-              "\n"
-              "#PBS -N " + cRID_char + "_" + exp_name  + "\n"
-              "#PBS -m abe -M nicway@u.washington.edu\n"
-              "#PBS -l nodes=1:ppn=8\n"
-              "#PBS -l walltime=24:00:00\n"
-	      "#PBS -l pmem=10GB\n"
-	      "#PBS -j oe\n"		
-	       #"#PBS -e errors/" + cRID_char + ".$PBS_O_JOBID.txt\n"
-              "\n"
-              "cd /home/wayandn/summa/bin/\n")
-    fin.write("./summa.exe ")
-    fin.write(exp_name + " " + c_fileManager + " > " + run_output + "\n")
-
-    # Close file
-    fin.close()
-
-    print "New pbs file made"
-
-    return
-
 

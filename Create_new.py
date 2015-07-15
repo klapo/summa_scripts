@@ -222,26 +222,23 @@ def ParamTrial(new_param_all,new_param_val,param_2_vary,NPruns,settings_dir,c_Si
     return
           
 # Create pbs.cmd file for qsub summission
-def pbs(exp_name,c_fileManager,run_output,cRID_char):
-
-    # Directories
-    new_file = "/home/wayandn/pbs.cmd"
+def pbs(pbs_file,exp_name,c_fileManager,run_output,run_dir,cRID_char,your_email):
 
     # Open file for writing
-    fin = open(new_file,"w")
+    fin = open(pbs_file,"w")
 
     # Write to file
     fin.write("#!/bin/sh\n"
               "\n"
               "#PBS -N " + cRID_char + "_" + exp_name  + "\n"
-              "#PBS -m abe -M nicway@u.washington.edu\n"
+              "#PBS -m abe -M " + your_email + "\n"
               "#PBS -l nodes=1:ppn=8\n"
               "#PBS -l walltime=24:00:00\n"
 	      "#PBS -l pmem=10GB\n"
 	      "#PBS -j oe\n"		
 	       #"#PBS -e errors/" + cRID_char + ".$PBS_O_JOBID.txt\n"
               "\n"
-              "cd /home/wayandn/FUSE_SNOW/bin/\n")
+              "cd " + run_dir + "/\n")
     fin.write("./summa.exe ")
     fin.write(exp_name + " " + c_fileManager + " > " + run_output + "\n")
 
