@@ -4,7 +4,7 @@ import shutil
 import re
 import sys
 import numpy
-from Create_run import pbs
+from Create_new import pbs
 
 
 # Created 01/07/2013 - Nic Wayand (nicway@u.washington.edu)
@@ -21,7 +21,7 @@ from Create_run import pbs
 
 
 # Create new file Manager
-def file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,IC_file):
+def file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,IC_file,Restartdir):
 
     # directories
     #c_Site_ID/cRID_char (i.e. SNQ/R_1)
@@ -48,22 +48,22 @@ def file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,IC_file):
     fin.write("'" + SITE_RUN + "/summa_zDecisions_" + c_Site_ID + ".txt'            ! M_DECISIONS     = definition of model decisions\n")
 
     # paths that are the same for ALL runs
-    fin.write("'summa_zTimeMeta.txt'                           ! META_TIME        = metadata for time\n"
-              "'summa_zLocalAttributeMeta.txt'                 ! META_ATTR        = metadata for local attributes\n"
-              "'summa_zCategoryMeta.txt'                       ! META_TYPE        = metadata for local classification of veg, soil, etc.\n"
-              "'summa_zForceMeta.txt'                          ! META_FORCE       = metadata for model forcing variables\n"
-              "'summa_zLocalParamMeta.txt'                     ! META_LOCALPARAM  = metadata for local model parameters\n"
-              "'summa_zLocalModelVarMeta.txt'                  ! META_LOCALMVAR   = metadata for local model variables\n"
-              "'summa_zLocalModelIndexMeta.txt'                ! META_INDEX       = metadata for model indices\n"
-              "'summa_zBasinParamMeta.txt'                     ! META_BASINPARAM  = metadata for basin-average model parameters\n"
-              "'summa_zBasinModelVarMeta.txt'                  ! META_BASINMVAR   = metadata for basin-average model variables\n")
+    fin.write("'meta/summa_zTimeMeta.txt'                           ! META_TIME        = metadata for time\n"
+              "'meta/summa_zLocalAttributeMeta.txt'                 ! META_ATTR        = metadata for local attributes\n"
+              "'meta/summa_zCategoryMeta.txt'                       ! META_TYPE        = metadata for local classification of veg, soil, etc.\n"
+              "'meta/summa_zForceMeta.txt'                          ! META_FORCE       = metadata for model forcing variables\n"
+              "'meta/summa_zLocalParamMeta.txt'                     ! META_LOCALPARAM  = metadata for local model parameters\n"
+              "'meta/summa_zLocalModelVarMeta.txt'                  ! META_LOCALMVAR   = metadata for local model variables\n"
+              "'meta/summa_zLocalModelIndexMeta.txt'                ! META_INDEX       = metadata for model indices\n"
+              "'meta/summa_zBasinParamMeta.txt'                     ! META_BASINPARAM  = metadata for basin-average model parameters\n"
+              "'meta/summa_zBasinModelVarMeta.txt'                  ! META_BASINMVAR   = metadata for basin-average model variables\n")
 
     # paths that change for each site
     fin.write("'" + c_Site_ID + "/summa_zLocalAttributes.txt'              ! LOCAL_ATTRIBUTES = local attributes\n"
               "'" + c_Site_ID + "/summa_zLocalParamInfo.txt'             ! LOCALPARAM_INFO  = default values and constraints for local model parameters\n"
               "'" + c_Site_ID + "/summa_zBasinParamInfo.txt'             ! BASINPARAM_INFO  = default values and constraints for basin-average model parameters\n"
               "'" + c_Site_ID + "/summa_zForcingFileList.txt'                ! FORCING_FILELIST = list of files used in each HRU\n"
-              "'" + c_Site_ID + "/Restart_noSnow/" + IC_file + "'              ! MODEL_INITCOND  = model initial conditions\n")
+              "'" + c_Site_ID + "/" + Restartdir + "/" + IC_file + "'              ! MODEL_INITCOND  = model initial conditions\n")
 
     # paths that change for each run
     fin.write("'" + SITE_RUN + "/summa_zParamTrial_" + c_Site_ID + ".txt'           ! PARAMETER_TRIAL = trial values for model parameters\n")

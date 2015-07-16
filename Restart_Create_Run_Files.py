@@ -6,6 +6,7 @@ import shutil
 import re
 import sys
 import datetime
+import numpy
 
 # Import FUSE functions
 import Create_new_V2
@@ -64,26 +65,20 @@ run_exe = main_dir + "bin/summa.exe"
 #Run_IDs = [1];
 
 # 2) Define Sites to Use
-Site_ID_all = ["SNQ13"]
+Site_ID_all = ["SNQ_ALL"]
 #Site_ID_all = ["SNQ14C"]
 
 # Extra) path to Restart files
 #
 # Careful, you must manually updat this in Creat_new_V2.py!!!
 # need to chane this to be automatic 11/20/2014
-#
-# SNQ14C
-#ReICpath = settings_dir + Site_ID_all[0] + "/Restart_ICs/"
-#ReICpath = settings_dir + Site_ID_all[0] + "/Restart_Default/"
-#ReICpath  = settings_dir + Site_ID_all[0] + "/Restart_cons_alb_com/" 
-#ReICpath  = settings_dir + Site_ID_all[0] + "/Restart_Cac_noSnow/"
 
-#SNQ13
-#ReICpath  = settings_dir + Site_ID_all[0] + "/Restart_Default/"
-ReICpath  = settings_dir + Site_ID_all[0] + "/Restart_noSnow/"
+#SNQ_ALL
+Restartdir = "Restart_noSnow"
 
-# 3) Define start and stop time (make sure only one date is uncommented!)
-# Now taken from IC files ( see below )
+# 3) Define first run number (i.e /Settings/R_X), for restart run. Number of restart runs is determined from the number of restart files
+#    in the Restartdir
+First_Run_number = 1000
 
 # 4) Define Parameters to modify from default values and Define values for each new_param_all
 # SNQ14C restart: Like a snowboard
@@ -101,7 +96,7 @@ param_2_vary  = 'mw_exp'
 # 6) Define Process/Methods to change from current
 
 
-ilCatTbl           =           'ROSETTA'  #! (03) soil-category dateset
+soilCatTbl         =           'ROSETTA'  #! (03) soil-category dateset
 vegeParTbl         =              'USGS'  #! (04) vegetation category dataset
 soilStress         =          'NoahType'  #! (05) choice of function for the soil moisture control on stomatal resistance
 stomResist         =         'BallBerry'  #! (06) choice of function for stomatal resistance
@@ -134,7 +129,7 @@ subRouting         =          'timeDlay'  #! (29) choice of method for sub-grid 
 Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thCondSnow,thCondSoil,spatial_gw,subRouting];
 
 # Get list of restart files
-
+ReICpath  = settings_dir + Site_ID_all[0] + "/" + Restartdir + "/"
 ICfiles_list = os.listdir(ReICpath)
 ICfiles_list.sort()
 #print ICfiles_list
@@ -143,6 +138,8 @@ ICfiles_list.sort()
 
 # Make list of run IDs based on length of ICfiles_list
 Run_IDs = range(1,len(ICfiles_list)+1)
+Run_IDs = numpy.array(Run_IDs) + First_Run_number
+Run_IDs = Run_IDs.tolist()
 #Run_IDs = range(1,11)
 #print len(Run_IDs)
 
@@ -205,7 +202,7 @@ while (cSite < NSites):
 
         # Create the file Manager
 	IC_file = ICfiles_list[cPR]
-        Create_new_V2.file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,IC_file)
+        Create_new_V2.file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,IC_file,Restartdir)
         
 	# Create the snow Desicians file
 	

@@ -39,15 +39,15 @@ import Create_new
 Site_ID_all = ["SNQ_ALL"]
 
 # 2) Run ID
-Run_IDs     = [5] #,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]
-#Run_IDs = range(1,229)
+#Run_IDs     = [5] #,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]
+Run_IDs = range(1001,1952)
 #Run_IDs = range(1,364)
 
 # 3) Experiment Name
-exp_name    = "Check_scripts"
+exp_name    = "Rec_Rest_nosnow"
 
 # 4) Run on Command line or in Queue?
-jobrun 	    = 2 # 1 = Command line, 2 = Queue
+jobrun 	    = 1 # 1 = Command line, 2 = Queue
 # Name of pbs file (if option 2 is used)
 pbs_file    = "/home/wayandn/pbs.cmd"
 your_email  = "nicway@u.washington.edu"
