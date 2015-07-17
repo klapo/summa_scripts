@@ -54,4 +54,5 @@ echo made param the record dimension
 
 # Clean up
 rm -f $Basedir$SITE'/'$expname'/temp1.nc'
+rm -f $Basedir$SITE'/'$expname'/'$SITE'_combined_'$expname'_time_dim.nc'
 
