@@ -64,7 +64,7 @@ run_exe      = main_dir + "bin/summa.exe"
 # a) Define a range of values
 #Run_IDs = my_range(20,30,1);
 # b) Define one number
-Run_IDs = [5];
+Run_IDs = [4];
 
 # 2) Define Sites to Use
 Site_ID_all = ["SNQ_ALL"]
@@ -85,13 +85,17 @@ Site_ID_all = ["SNQ_ALL"]
 #datestart = "1993-08-01 02:00"
 #dateend   = "2011-07-31 22:00"
 
-# SNQ_ALL
+# SNQ_AL Recent (testing)
 datestart = "2012-10-01 00:00"
-dateend   = "2015-05-11 21:30"
+dateend   = "2013-01-15 00:00"
+
+# SNQ_ALL Recent
+#datestart = "2012-10-01 00:00"
+#dateend   = "2015-05-11 21:30"
 
 # SNQ_ALL Historic
 #datestart = "1988-12-26 00:00"
-#dateend   = "2012-10-01 00:00"
+#dateend   = "2012-09-30 23:00"
 
 
 # SNQ14C
@@ -156,8 +160,9 @@ thCondSnow         =          'jrdn1991'  #! (26) choice of thermal conductivity
 thCondSoil         =        'mixConstit'  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =       'localColumn'  #! (28) choice of method for the spatial representation of groundwater
 subRouting         =          'timeDlay'  #! (29) choice of method for sub-grid routing
+snowDenNew         =          'pahaut_76'  #! (30) choice of method for new snow density
 
-Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thCondSnow,thCondSoil,spatial_gw,subRouting];
+Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thCondSnow,thCondSoil,spatial_gw,subRouting,snowDenNew];
 
 #####################################################################################
 # Loop through each Site (Index from zero)

@@ -129,6 +129,7 @@ def Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend):
     fin.write("thCondSoil                      " + Decisions_ALL[24]  + " ! (27) choice of method for the spatial representation of groundwater\n")
     fin.write("spatial_gw                      " + Decisions_ALL[25]  + " ! (28) choice of method for the spatial representation of groundwater\n")
     fin.write("subRouting                      " + Decisions_ALL[26]  + " ! (29) choice of method for sub-grid routing\n")
+    fin.write("snowDenNew                      " + Decisions_ALL[27]  + " ! (30) choice of method for new snow density\n")
 
     print "Finished creating new Decision file"
 
