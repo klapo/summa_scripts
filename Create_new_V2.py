@@ -97,8 +97,8 @@ def Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend):
               "! (2) the name of the decision is followed by the character string defining the decision\n"
               "! (3) the simulation start/end times must be within single quotes\n"
               "! ***********************************************************************************************************************\n")
-    fin.write("simulStart              '" + datestart + "'  ! (T-01) simulation start time -- must be in single quotes\n"
-              "simulFinsh              '" + dateend + "'  ! (T-02) simulation end time -- must be in single quotes\n"
+    fin.write("simulStart              '" + datestart + "'  ! (01) simulation start time -- must be in single quotes\n"
+              "simulFinsh              '" + dateend + "'  ! (02) simulation end time -- must be in single quotes\n"
               "! ***********************************************************************************************************************\n")
     # Print Desicians (Decisions_ALL indexed by zero)
     fin.write("soilCatTbl                      " + Decisions_ALL[0]  + " ! (03) soil-category dateset\n")
