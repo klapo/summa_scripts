@@ -39,17 +39,17 @@ import Create_new
 Site_ID_all = ["SNQ_ALL"]
 
 # 2) Run ID
-#Run_IDs     = [5] #,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]
-Run_IDs = range(1001,1952)
-#Run_IDs = range(1,364)
+#Run_IDs     = [10701] #,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]
+#Run_IDs = range(10701,19380)
+Run_IDs = range(10705,10711)
 
 # 3) Experiment Name
-exp_name    = "Rec_Rest_nosnow"
+exp_name    = "test_queue"
 
 # 4) Run on Command line or in Queue?
-jobrun 	    = 1 # 1 = Command line, 2 = Queue
+jobrun 	    = 2 # 1 = Command line, 2 = Queue
 # Name of pbs file (if option 2 is used)
-pbs_file    = "/home/wayandn/pbs.cmd"
+#pbs_file    = "/home/wayandn/pbs.cmd"
 your_email  = "nicway@u.washington.edu"
 
 #####################################################################################
@@ -104,10 +104,11 @@ while (cSite < NSites):
             run_exe_input = run_exe + " " + exp_name + " " + c_fileManager + " > " + run_output + " &"
             os.system(run_exe_input)
         elif jobrun == 2: # Submit run to Queue
-
+	   # Make bew pbs name file
+	   pbs_file=home_dir + "QUEUE_pbs_files/" + cRID_char + ".pbs"
            # Edit pbs.cmd file
            Create_new.pbs(pbs_file,exp_name,c_fileManager,run_output,run_dir,cRID_char,your_email)
-           run_exe_input = "qsub " + home_dir + "pbs.cmd "
+           run_exe_input = "qsub " + home_dir + "QUEUE_pbs_files/" + cRID_char + ".pbs"
            #print run_exe_input
            os.system(run_exe_input)
 
