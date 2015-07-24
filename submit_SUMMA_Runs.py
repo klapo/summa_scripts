@@ -41,15 +41,19 @@ Site_ID_all = ["SNQ_ALL"]
 # 2) Run ID
 #Run_IDs     = [10701] #,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]
 #Run_IDs = range(10701,19380)
-Run_IDs = range(10705,10711)
+Run_IDs = range(10711,10750)
 
 # 3) Experiment Name
 exp_name    = "test_queue"
 
 # 4) Run on Command line or in Queue?
-jobrun 	    = 2 # 1 = Command line, 2 = Queue
-# Name of pbs file (if option 2 is used)
-#pbs_file    = "/home/wayandn/pbs.cmd"
+jobrun 	    = 3 # 1 = Command line, 2 = Queue (single job), 3 = Serial Parrallel jobs
+# Path/Name of argument file (if option 3 is used)
+argument_file    = "/home/wayandn/serial_job_args/Restart_exp" # List of inputs to summa.exe for each job
+# Path/Name of pbs file for Serial parrallel jobs (if option 3 is used)
+seriall_pbs = "/home/wayandn/SerialSubmit.pbs"
+
+# General PBS options here 
 your_email  = "nicway@u.washington.edu"
 
 #####################################################################################
@@ -87,6 +91,9 @@ while (cSite < NSites):
     # Loop through each Run_ID for site (Index from zero)
     #####################################################################################
     cRID  = 0 # Index of current Run_IDs
+    if jobrun == 3: # Open file for writing to (overwrite anything already there)
+        fin = open(argument_file,'w')
+
     while (cRID < NIDs):
         #print cRID
         
@@ -111,9 +118,20 @@ while (cSite < NSites):
            run_exe_input = "qsub " + home_dir + "QUEUE_pbs_files/" + cRID_char + ".pbs"
            #print run_exe_input
            os.system(run_exe_input)
-
-        # End of Run_ID loop
+        elif jobrun == 3: # Submit Serial parallel jobs
+	   # Write to argumentfile
+	   fin.write(exp_name + " " + c_fileManager + " > " + run_output + "\n")
+           	
         cRID +=1
+    # End of Run_ID loop
+    
+    # Close file
+    fin.close()
+    
+    # Submit parallel jobs if needed 	
+    if jobrun == 3: # Now submit all jobs in one qsub command
+        print "Submitting serial parallel job to queue!" 
+        os.system("qsub " + seriall_pbs)
     # End of Site loop
     cSite += 1    
 
