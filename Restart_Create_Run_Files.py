@@ -92,7 +92,7 @@ new_param_val = [           0.05,             0.01,            0.01,         0.5
 
 # 5) Define which paramter to allow to vary (between min and max in summa_zLocalParamInfo)
 # Note: this overwrites the value given in new_param_val.
-param_2_vary  = 'mw_exp' 
+#param_2_vary  = 'mw_exp' 
 
 # 6) Define Process/Methods to change from current
 
@@ -215,28 +215,11 @@ while (cSite < NSites):
 	datestart = Datestart.strftime("%Y-%m-%d %H:%M")
 	dateend   = Dateend.strftime("%Y-%m-%d %H:%M")
 
-	#print datestart
-	#print dateend
-
-	#sys.exit()
-
-	#fulldate = IC_file.split('_')
-	#yyyymmdd = fulldate[0].split('-')
-	#cdd = int(yyyymmdd[2])
-	#ndd = cdd + 1;
-	
-	#datestart = fulldate[0] + " 06:30"
-	#dateend   = yyyymmdd[0] + "-" + yyyymmdd[1] + "-" + str(ndd).zfill(2) + " 06:00"
-
-	#print datestart
-	#print dateend
-
-	#sys.exit()
-
+	# Create Desicions file
 	Create_new.Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend)
 
         # Edit Parameter settings for current run
-        Create_new.ParamTrial(new_param_all,new_param_val,param_2_vary,NPruns,settings_dir,c_Site_ID,cRID_char)
+        #Create_new.ParamTrial(new_param_all,new_param_val,NPruns,settings_dir,c_Site_ID,cRID_char)
 
         # Create run output file (overwrites previous)
         if not os.path.exists(run_output):
