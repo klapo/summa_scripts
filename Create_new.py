@@ -67,6 +67,7 @@ def file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char):
 
     # paths that change for each run
     fin.write("'" + SITE_RUN + "/summa_zParamTrial_" + c_Site_ID + ".txt'           ! PARAMETER_TRIAL = trial values for model parameters\n")
+    #fin.write("'/summa_zParamTrial_Restart_part.txt'           ! PARAMETER_TRIAL = trial values for model parameters\n")
     fin.write("'" + c_Site_ID + "_" + cRID_char + "'                                        ! OUTPUT_PREFIX\n")
 
     # Close file
@@ -229,14 +230,15 @@ def pbs(pbs_file,exp_name,c_fileManager,run_output,run_dir,cRID_char,your_email)
     fin = open(pbs_file,"w")
 
     # Write to file
-    fin.write("#!/bin/sh\n"
+    fin.write("#!/bin/bash\n"
               "\n"
               "#PBS -N " + cRID_char + "_" + exp_name  + "\n"
               "#PBS -m abe -M " + your_email + "\n"
               "#PBS -l nodes=1:ppn=8\n"
-              "#PBS -l walltime=24:00:00\n"
+              "#PBS -l walltime=00:20:00\n"
 	      "#PBS -l pmem=10GB\n"
-	      "#PBS -j oe\n"		
+	      "#PBS -j oe\n"
+	      "export LD_LIBRARY_PATH=/opt/netcdf-4.3.0+ifort-12.1/lib"		
 	       #"#PBS -e errors/" + cRID_char + ".$PBS_O_JOBID.txt\n"
               "\n"
               "cd " + run_dir + "/\n")
