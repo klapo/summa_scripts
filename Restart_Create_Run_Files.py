@@ -10,6 +10,7 @@ import numpy
 
 # Import FUSE functions
 import Create_new_V2
+import Create_new
 
 ####################################################################################
 # Restart_Create_Run_Files.py
@@ -74,11 +75,11 @@ Site_ID_all = ["SNQ_ALL"]
 # need to chane this to be automatic 11/20/2014
 
 #SNQ_ALL
-Restartdir = "Restart_noSnow"
+Restartdir = "Restart_Hist_noSnow"
 
 # 3) Define first run number (i.e /Settings/R_X), for restart run. Number of restart runs is determined from the number of restart files
 #    in the Restartdir
-First_Run_number = 1000
+First_Run_number = 10700
 
 # 4) Define Parameters to modify from default values and Define values for each new_param_all
 # SNQ14C restart: Like a snowboard
@@ -124,9 +125,10 @@ thCondSnow         =          'jrdn1991'  #! (26) choice of thermal conductivity
 thCondSoil         =        'mixConstit'  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =       'localColumn'  #! (28) choice of method for the spatial representation of groundwater
 subRouting         =          'timeDlay'  #! (29) choice of method for sub-grid routing
+snowDenNew         =         'hedAndPom'  #! (30) choice of method for new snow density
 
 # Store all decisions
-Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thCondSnow,thCondSoil,spatial_gw,subRouting];
+Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thCondSnow,thCondSoil,spatial_gw,subRouting,snowDenNew];
 
 # Get list of restart files
 ReICpath  = settings_dir + Site_ID_all[0] + "/" + Restartdir + "/"
@@ -231,10 +233,10 @@ while (cSite < NSites):
 
 	#sys.exit()
 
-	Create_new_V2.Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend)
+	Create_new.Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend)
 
         # Edit Parameter settings for current run
-        Create_new_V2.ParamTrial(new_param_all,new_param_val,param_2_vary,NPruns,settings_dir,c_Site_ID,cRID_char)
+        Create_new.ParamTrial(new_param_all,new_param_val,param_2_vary,NPruns,settings_dir,c_Site_ID,cRID_char)
 
         # Create run output file (overwrites previous)
         if not os.path.exists(run_output):
