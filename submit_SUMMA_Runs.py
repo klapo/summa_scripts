@@ -41,15 +41,15 @@ Site_ID_all = ["SNQ_ALL"]
 # 2) Run ID
 #Run_IDs     = [10701] #,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]
 #Run_IDs = range(10701,19380)
-Run_IDs = range(10711,10750)
+Run_IDs = range(10701,10801)
 
 # 3) Experiment Name
-exp_name    = "test_queue"
+exp_name    = "Rest_Par_exp"
 
 # 4) Run on Command line or in Queue?
-jobrun 	    = 3 # 1 = Command line, 2 = Queue (single job), 3 = Serial Parrallel jobs
+jobrun 	    = 2 # 1 = Command line, 2 = Queue (single job), 3 = Serial Parrallel jobs
 # Path/Name of argument file (if option 3 is used)
-argument_file    = "/home/wayandn/serial_job_args/Restart_exp" # List of inputs to summa.exe for each job
+argument_file    = "/home/wayandn/serial_job_args/Restart_exp" # List of inputs to summa.exe for each job (is created below)
 # Path/Name of pbs file for Serial parrallel jobs (if option 3 is used)
 seriall_pbs = "/home/wayandn/SerialSubmit.pbs"
 
@@ -124,9 +124,10 @@ while (cSite < NSites):
            	
         cRID +=1
     # End of Run_ID loop
-    
-    # Close file
-    fin.close()
+   
+    if jobrun == 3: # Close file if running serial
+        # Close file
+        fin.close()
     
     # Submit parallel jobs if needed 	
     if jobrun == 3: # Now submit all jobs in one qsub command
