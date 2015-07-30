@@ -39,15 +39,20 @@ import Create_new
 Site_ID_all = ["SNQ_ALL"]
 
 # 2) Run ID
-#Run_IDs     = [10701] #,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]
-#Run_IDs = range(10701,19380)
-Run_IDs = range(10701,10801)
+#Run_IDs     = [20001] 
+Run_IDs = range(20001 ,20954)
+#Run_IDs = range(15363,15463)
 
 # 3) Experiment Name
-exp_name    = "Rest_Par_exp"
+exp_name    = "Rest_recent_Par_exp"
 
 # 4) Run on Command line or in Queue?
-jobrun 	    = 2 # 1 = Command line, 2 = Queue (single job), 3 = Serial Parrallel jobs
+jobrun 	    = 1 # 1 = Command line, 2 = Queue (single job), 3 = Serial Parrallel jobs
+
+# RUN OPTIONS if jobrun==2
+runJobsSerial = 1 # 1 = jobs run in serial (one at a time), 2 = jobs are submited all at once to command line
+
+# RUN OPTIONS if jobrun==3
 # Path/Name of argument file (if option 3 is used)
 argument_file    = "/home/wayandn/serial_job_args/Restart_exp" # List of inputs to summa.exe for each job (is created below)
 # Path/Name of pbs file for Serial parrallel jobs (if option 3 is used)
@@ -108,8 +113,13 @@ while (cSite < NSites):
              sys.exit("Run ID %s for site %s doesn't exist" % (cRID_char,c_Site_ID))
        
         if jobrun == 1: # Submit to command line
-            run_exe_input = run_exe + " " + exp_name + " " + c_fileManager + " > " + run_output + " &"
-            os.system(run_exe_input)
+            if runJobsSerial==1:
+            	run_exe_input = run_exe + " " + exp_name + " " + c_fileManager + " > " + run_output
+            elif runJobsSerial==2:
+ 	        run_exe_input = run_exe + " " + exp_name + " " + c_fileManager + " > " + run_output + " &"
+
+	    os.system(run_exe_input)
+            print "finished run " + cRID_char
         elif jobrun == 2: # Submit run to Queue
 	   # Make bew pbs name file
 	   pbs_file=home_dir + "QUEUE_pbs_files/" + cRID_char + ".pbs"
@@ -118,6 +128,7 @@ while (cSite < NSites):
            run_exe_input = "qsub " + home_dir + "QUEUE_pbs_files/" + cRID_char + ".pbs"
            #print run_exe_input
            os.system(run_exe_input)
+           #print "finished run " + cRID_char
         elif jobrun == 3: # Submit Serial parallel jobs
 	   # Write to argumentfile
 	   fin.write(exp_name + " " + c_fileManager + " > " + run_output + "\n")
