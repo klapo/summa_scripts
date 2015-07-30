@@ -12,7 +12,7 @@ rm -f $outfile
 # For each run output directory (i.e. R_3)
 while ( $RS <= $RE )
 echo Processing Run $RS
-echo Processing Run $RS >> $outfile
+#echo Processing Run $RS >> $outfile
 
 set Curdir  = $Basedir$SITE/R_$RS/
 
