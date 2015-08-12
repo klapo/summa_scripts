@@ -187,7 +187,7 @@ def GetParamVals(param_2_vary,NPruns,settings_dir,c_Site_ID):
     return (Pvals)
 
 # Create new Param Trial file
-def ParamTrial(new_param_all,new_param_val,param_2_vary,NPruns,settings_dir,c_Site_ID,cRID_char):
+def ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char):
 
     # Define new Paramter file
     new_file          = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
