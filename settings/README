@@ -1,0 +1,5 @@
+Full_param_option_ensemble.py is the main script where you specify your run configuration settings.
+	This requires: func_Restart_Create.py
+		       Create_new.py
+
+Other scripts in /settings/ are used for creating "Restart" runs to represent a snowboard
