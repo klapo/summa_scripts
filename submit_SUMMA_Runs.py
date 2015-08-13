@@ -3,7 +3,7 @@
 # Import
 import os
 import sys
-import Create_new
+from settings import Create_new
 
 ####################################################################################
 # submit_SUMMA_Runs.py
@@ -39,15 +39,15 @@ import Create_new
 Site_ID_all = ["SNQ_ALL"]
 
 # 2) Run ID
-#Run_IDs     = [20001] 
-Run_IDs = range(20001 ,20954)
+Run_IDs     = [30001] 
+#Run_IDs = range(40001,40953)
 #Run_IDs = range(15363,15463)
 
 # 3) Experiment Name
-exp_name    = "Rest_recent_Par_exp"
+exp_name    = "Cont_lr_compac_exp"
 
 # 4) Run on Command line or in Queue?
-jobrun 	    = 1 # 1 = Command line, 2 = Queue (single job), 3 = Serial Parrallel jobs
+jobrun 	    = 1 # 1 = Command line, 2 = Queue (single job), 3 = Serial Parrallel jobs (note: requires GNU parallel)
 
 # RUN OPTIONS if jobrun==2
 runJobsSerial = 1 # 1 = jobs run in serial (one at a time), 2 = jobs are submited all at once to command line
