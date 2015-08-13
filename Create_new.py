@@ -139,7 +139,7 @@ def Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend):
 # Get values for given parameter from Local
 def GetParamVals(param_2_vary,NPruns,settings_dir,c_Site_ID):
 
-# filename
+    # filename
     param_limits_file = settings_dir + c_Site_ID + "/summa_zLocalParamInfo.txt"
     
     # Get Param limits from summa_zParamInfo.txt in ~/settings/
@@ -222,6 +222,47 @@ def ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char):
     print "Finished creating new summa_zParamTrial file"
 
     return
+
+# Create new Param Trial file (With multiple HRUs)
+def ParamTrial_Multi_hru(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char):
+
+    # Define new Paramter file
+    new_file          = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
+
+    # Open file for writing
+    fin = open(new_file,"w")
+
+    # Print header info
+    fin.write("! ***********************************************************************************************************************\n"
+              "! ***********************************************************************************************************************\n"
+              "! ***** DEFINITION OF TRIAL MODEL PARAMETER VALUES **********************************************************************\n"
+              "! ***********************************************************************************************************************\n"
+              "! ***********************************************************************************************************************\n"
+              "! Note: Lines starting with ""!"" are treated as comment lines -- there is no limit on the number of comment lines.\n"
+              "!\n"
+              "! Variable names are important: They must match the variables in the code, and they must occur before the data.\n"
+              "!  NOTE: must include information for all HRUs\n"
+              "! ***********************************************************************************************************************\n")
+
+    # Print c_new_param
+    paramtext = "    ".join(new_param_all)
+    
+    fin.write("hruIndex %s\n" %paramtext)
+    
+    for chru in range(0,len(new_param_val)):
+        c_values = "    ".join(map(str,new_param_val[chru]))
+        c_hru = 1001 + chru
+        fin.write("%d     %s\n" %(c_hru, c_values) )
+    
+    # Close file
+    fin.close()
+
+    return
+
+
+
+
+
           
 # Create pbs.cmd file for qsub summission
 def pbs(pbs_file,exp_name,c_fileManager,run_output,run_dir,cRID_char,your_email):
