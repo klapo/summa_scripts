@@ -78,7 +78,7 @@ def file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char):
     return
 
 # Create new file Manager if ther are multiple HRUs
-def file_Manager_Multi_HRUs(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char):
+def file_Manager_Multi_HRUs(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,Var_out_lev):
 
     # directories
     #c_Site_ID/cRID_char (i.e. SNQ/R_1)
@@ -109,9 +109,19 @@ def file_Manager_Multi_HRUs(settings_dir,input_dir,output_dir,c_Site_ID,cRID_cha
               "'meta/summa_zLocalAttributeMeta.txt'                 ! META_ATTR        = metadata for local attributes\n"
               "'meta/summa_zCategoryMeta.txt'                       ! META_TYPE        = metadata for local classification of veg, soil, etc.\n"
               "'meta/summa_zForceMeta.txt'                          ! META_FORCE       = metadata for model forcing variables\n"
-              "'meta/summa_zLocalParamMeta.txt'                     ! META_LOCALPARAM  = metadata for local model parameters\n"
-              "'meta/summa_zLocalModelVarMeta.txt'                  ! META_LOCALMVAR   = metadata for local model variables\n"
-              "'meta/summa_zLocalModelIndexMeta.txt'                ! META_INDEX       = metadata for model indices\n"
+              "'meta/summa_zLocalParamMeta.txt'                     ! META_LOCALPARAM  = metadata for local model parameters\n")
+    # Option for level of output variables (helps reduce size of netcdf files)
+    if Var_out_lev==1:
+	fin.write("'meta/summa_zLocalModelVarMeta.txt'                  ! META_LOCALMVAR   = metadata for local model variables\n")
+    elif Var_out_lev==2:
+	fin.write("'meta/summa_zLocalModelVarMeta.txt.light'                  ! META_LOCALMVAR   = metadata for local model variables\n")
+    else:
+	print "Var_out_lev must be option 1 or 2"
+	return
+
+    # Cont. printing
+    
+    fin.write("'meta/summa_zLocalModelIndexMeta.txt'                ! META_INDEX       = metadata for model indices\n"
               "'meta/summa_zBasinParamMeta.txt'                     ! META_BASINPARAM  = metadata for basin-average model parameters\n"
               "'meta/summa_zBasinModelVarMeta.txt'                  ! META_BASINMVAR   = metadata for basin-average model variables\n")
 

@@ -14,7 +14,7 @@ import os
 import Create_new
 
 
-def Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char,c_Decisions,new_param_all,new_param_val,datestart,dateend,forcing_file,base_hru_num):
+def Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char,c_Decisions,new_param_all,new_param_val,datestart,dateend,forcing_file,base_hru_num,Var_out_lev):
 	
 	# Define new run paths for current run
 	c_output_dir   = output_dir   + c_Site_ID + "/" + cRID_char
@@ -31,7 +31,7 @@ def Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char
 		os.makedirs(c_settings_dir)
 
 	# Create the file Manager
-	Create_new.file_Manager_Multi_HRUs(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char)
+	Create_new.file_Manager_Multi_HRUs(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,Var_out_lev)
 
 	# Create the Desicians file
 	Create_new.Desicions(c_Decisions,settings_dir,c_Site_ID,cRID_char,datestart,dateend)

@@ -66,7 +66,7 @@ run_exe = main_dir + "bin/summa.exe"
 Site_ID_all = ["SNQ_ALL"]
 
 # Define first run number 
-First_Run_number = 30000
+First_Run_number = 30002
 
 # SNQ_ALL Recent
 datestart = "2012-10-01 00:00"
@@ -75,13 +75,16 @@ dateend   = "2015-05-11 21:30"
 # Name of forcing file to use (found in input_dir/Site_ID_all/)
 forcing_file = "summa_zForcingInfo_SNQ_NWAC.txt"
 
+# Specify level of variables to output (1: HIGH (i.e. many variables), 2: LOW (i.e. only most "important" variables)
+Var_out_lev = 2
+
 # Define base HRU to use
 base_hru_num = 1001 
 
 # User defines model options to create settings for (all combinations)
 soilCatTbl         =          ['ROSETTA']  #! (03) soil-category dateset
 vegeParTbl         =          ['USGS']  #! (04) vegetation category dataset
-soilStress         =          ['CLM_Type']  #! (05) choice of function for the soil moisture control on stomatal resistance
+soilStress         =          ['NoahType']  #! (05) choice of function for the soil moisture control on stomatal resistance
 stomResist         =          ['BallBerry']  #! (06) choice of function for stomatal resistance
 #! ***********************************************************************************************************************
 num_method         =          ['itertive']  #! (07) choice of numerical method
@@ -95,15 +98,15 @@ bcLowrTdyn         =          ['zeroFlux']  #! (14) type of lower boundary condi
 bcUpprSoiH         =          ['liq_flux']  #! (15) type of upper boundary condition for soil hydrology
 bcLowrSoiH         =          ['drainage']  #! (16) type of lower boundary condition for soil hydrology
 veg_traits         =          ['CM_QJRMS1998']  #! (17) choice of parameterization for vegetation roughness length and displacement height
-canopyEmis         =          ['simplExp']  #! (18) choice of parametrization for canopy emissivity
+canopyEmis         =          ['difTrans']  #! (18) choice of parametrization for canopy emissivity
 snowIncept         =          ['stickySnow']  #! (19) choice of parameterization for snow interception
 windPrfile         =          ['logBelowCanopy']  #! (20) choice of wind profile through the canopy
-astability         =          ['standard']  #! (21) choice of stability function
+astability         =          ['mahrtexp']  #! (21) choice of stability function
 canopySrad         =          ['CLM_2stream']  #! (22) choice of canopy shortwave radiation method
-alb_method         =          ['conDecay']  #! (23) choice of albedo representation
-compaction         =          ['consettl']  #! (24) choice of compaction routine
-snowLayers         =          ['CLM_2010']  #! (25) choice of method to combine and sub-divide snow layers
-thCondSnow         =          ['tyen1965']  #! (26) choice of thermal conductivity representation for snow
+alb_method         =          ['varDecay']  #! (23) choice of albedo representation
+compaction         =          ['anderson']  #! (24) choice of compaction routine
+snowLayers         =          ['jrdn1991']  #! (25) choice of method to combine and sub-divide snow layers
+thCondSnow         =          ['jrdn1991']  #! (26) choice of thermal conductivity representation for snow
 thCondSoil         =          ['mixConstit']  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =          ['localColumn']  #! (28) choice of method for the spatial representation of groundwater
 subRouting         =          ['timeDlay']  #! (29) choice of method for sub-grid routing
@@ -119,7 +122,7 @@ new_param_val = [         273.66,                 1,           0.05,            
 param_2_vary  = ['densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
 
 # Number of samples from parameter space
-Num_Sam = 2
+Num_Sam = 3
 
 # For each parameter to vary
 Pvals  = []; # Initialize list of values
@@ -156,7 +159,7 @@ print(NrunsTot)
 
 # Make list of run IDs based on length of NrunsTot
 Run_IDs = range(1,NrunsTot+1)
-Run_IDs = numpy.array(Run_IDs) + First_Run_number
+Run_IDs = numpy.array(Run_IDs) + First_Run_number - 1
 Run_IDs = Run_IDs.tolist()
 
 # Run Info
@@ -181,7 +184,7 @@ while (cSite < NSites):
         c_Decisions = Option_permutations[cReRun]
 
         # Create each daily settings file for this Restart simulation
-        func_Restart_Create.Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char,c_Decisions,Param_name,Param_valu,datestart,dateend,forcing_file,base_hru_num)
+        func_Restart_Create.Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char,c_Decisions,Param_name,Param_valu,datestart,dateend,forcing_file,base_hru_num,Var_out_lev)
         
         # Update current run number
 	cReRun = cReRun + 1
