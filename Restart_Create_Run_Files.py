@@ -69,25 +69,25 @@ run_exe = main_dir + "bin/summa.exe"
 Site_ID_all = ["SNQ_ALL"]
 #Site_ID_all = ["SNQ14C"]
 
+# 3) Define time step of runs
+timestep = 60; # in minutes
+
 # Extra) path to Restart files
-#
-# Careful, you must manually updat this in Creat_new_V2.py!!!
-# need to chane this to be automatic 11/20/2014
 
 #SNQ_ALL
-Restartdir = "Restart_Hist_noSnow"
+Restartdir = "Restart_Recent_noSnow"
 
 # 3) Define first run number (i.e /Settings/R_X), for restart run. Number of restart runs is determined from the number of restart files
 #    in the Restartdir
-First_Run_number = 10700
+First_Run_number = 40000
 
 # 4) Define Parameters to modify from default values and Define values for each new_param_all
 # SNQ14C restart: Like a snowboard
 #new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede']
 #new_param_val = [           0.000001,             0.0000001,            0.00,         0.00,                  0,  0]
 
-new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax'] #,'theta_sat', 'theta_res',  'vGn_alpha',  'vGn_n','k_soil']
-new_param_val = [           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1] #,          0.401,     0.136,          -0.84,    1.30,   0.0015]
+new_param_all = ['tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax'] #,'theta_sat', 'theta_res',  'vGn_alpha',  'vGn_n','k_soil']
+new_param_val = [         273.66,                 1,            0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1] #,          0.401,     0.136,          -0.84,    1.30,   0.0015]
 
 
 # 5) Define which paramter to allow to vary (between min and max in summa_zLocalParamInfo)
@@ -125,7 +125,7 @@ thCondSnow         =          'jrdn1991'  #! (26) choice of thermal conductivity
 thCondSoil         =        'mixConstit'  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =       'localColumn'  #! (28) choice of method for the spatial representation of groundwater
 subRouting         =          'timeDlay'  #! (29) choice of method for sub-grid routing
-snowDenNew         =         'hedAndPom'  #! (30) choice of method for new snow density
+snowDenNew         =         'constDens'  #! (30) choice of method for new snow density
 
 # Store all decisions
 Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thCondSnow,thCondSoil,spatial_gw,subRouting,snowDenNew];
@@ -146,8 +146,8 @@ Run_IDs = Run_IDs.tolist()
 #print len(Run_IDs)
 
 # Run Info
-NPruns = len(Run_IDs)
-NSites = len(Site_ID_all)
+NPruns = len(Run_IDs) # Number of restart runs
+NSites = len(Site_ID_all) # Number of cites
 
 #sys.exit()
  
@@ -209,7 +209,7 @@ while (cSite < NSites):
 	# Create the snow Desicians file
 	
 	Datein    = datetime.datetime.strptime(IC_file, "%Y-%m-%d_%H_%M")	
-	Datestart = Datein + datetime.timedelta(minutes=30)
+	Datestart = Datein + datetime.timedelta(minutes=timestep)
 	Dateend   = Datein + datetime.timedelta(days=1) # Restart time period hard coded here
 	
 	datestart = Datestart.strftime("%Y-%m-%d %H:%M")
@@ -219,7 +219,7 @@ while (cSite < NSites):
 	Create_new.Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend)
 
         # Edit Parameter settings for current run
-        #Create_new.ParamTrial(new_param_all,new_param_val,NPruns,settings_dir,c_Site_ID,cRID_char)
+        Create_new.ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char)
 
         # Create run output file (overwrites previous)
         if not os.path.exists(run_output):
