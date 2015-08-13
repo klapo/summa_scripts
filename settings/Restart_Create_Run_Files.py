@@ -125,7 +125,7 @@ thCondSnow         =          'jrdn1991'  #! (26) choice of thermal conductivity
 thCondSoil         =        'mixConstit'  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =       'localColumn'  #! (28) choice of method for the spatial representation of groundwater
 subRouting         =          'timeDlay'  #! (29) choice of method for sub-grid routing
-snowDenNew         =         'constDens'  #! (30) choice of method for new snow density
+snowDenNew         =         'pahaut_76'  #! (30) choice of method for new snow density
 
 # Store all decisions
 Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thCondSnow,thCondSoil,spatial_gw,subRouting,snowDenNew];
