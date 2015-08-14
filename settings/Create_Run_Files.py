@@ -64,11 +64,11 @@ run_exe      = main_dir + "bin/summa.exe"
 # a) Define a range of values
 #Run_IDs = my_range(20,30,1);
 # b) Define one number
-Run_IDs = [4];
+Run_IDs = [1];
 
 # 2) Define Sites to Use
 Site_ID_all = ["SNQ_ALL"]
-#Site_ID_all = ["SNQ14C"]
+#Site_ID_all = ["OLM"]
 
 # 3) Defind start and stop time (make sure only one date is uncommented!)
 # SNQ13
@@ -85,13 +85,17 @@ Site_ID_all = ["SNQ_ALL"]
 #datestart = "1993-08-01 02:00"
 #dateend   = "2011-07-31 22:00"
 
+# OLM 1980 to 2011
+#datestart = "1999-08-31 17:00"
+#dateend   = "2008-12-30 00:00"
+
 # SNQ_AL Recent (testing)
-datestart = "2012-10-01 00:00"
-dateend   = "2013-01-15 00:00"
+#datestart = "2012-10-01 00:00"
+#dateend   = "2013-01-15 00:00"
 
 # SNQ_ALL Recent
-#datestart = "2012-10-01 00:00"
-#dateend   = "2015-05-11 21:30"
+datestart = "2012-10-01 00:00"
+dateend   = "2015-05-11 21:30"
 
 # SNQ_ALL Historic
 #datestart = "1988-12-26 00:00"
@@ -119,8 +123,8 @@ dateend   = "2013-01-15 00:00"
 
 # 4) Define Parameters to modify from default values and Define values for each new_param_all
 # SNQ
-new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth', 'zmax'] #,'theta_sat', 'theta_res',  'vGn_alpha',  'vGn_n','k_soil']
-new_param_val = [           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1] #,          0.401,     0.136,          -0.84,    1.30,   0.0015]
+new_param_all = ['tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth', 'zmax'] #,'theta_sat', 'theta_res',  'vGn_alpha',  'vGn_n','k_soil']
+new_param_val = [         273.66,                 1,            0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1] #,          0.401,     0.136,          -0.84,    1.30,   0.0015]
 
 # 5) Define which paramter to allow to vary (between min and max in summa_zLocalParamInfo) Note: this overwrites the value given in new_param_val.
 param_2_vary  = 'mw_exp' 
@@ -160,7 +164,7 @@ thCondSnow         =          'jrdn1991'  #! (26) choice of thermal conductivity
 thCondSoil         =        'mixConstit'  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =       'localColumn'  #! (28) choice of method for the spatial representation of groundwater
 subRouting         =          'timeDlay'  #! (29) choice of method for sub-grid routing
-snowDenNew         =          'pahaut_76'  #! (30) choice of method for new snow density
+snowDenNew         =         'pahaut_76'  #! (30) choice of method for new snow density
 
 Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thCondSnow,thCondSoil,spatial_gw,subRouting,snowDenNew];
 
@@ -219,7 +223,7 @@ while (cSite < NSites):
 	Create_new.Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend)
 
         # Edit Parameter settings for current run
-        Create_new.ParamTrial(new_param_all,new_param_val,param_2_vary,NPruns,settings_dir,c_Site_ID,cRID_char)
+        Create_new.ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char)
 
         # Create run output file (overwrites previous)
         if not os.path.exists(run_output):
