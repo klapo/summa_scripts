@@ -7,9 +7,9 @@ import re
 import sys
 import datetime
 import numpy
+import itertools
 
 # Import FUSE functions
-import Create_new_V2
 import Create_new
 
 ####################################################################################
@@ -70,9 +70,16 @@ Site_ID_all = ["SNQ_ALL"]
 #Site_ID_all = ["SNQ14C"]
 
 # 3) Define time step of runs
-timestep = 60; # in minutes
+timestep = 30; # in minutes
 
-# Extra) path to Restart files
+# Name of forcing file to use (found in input_dir/Site_ID_all/)
+forcing_file = "summa_zForcingInfo_SNQ_NWAC.txt"
+
+# Specify level of variables to output (1: HIGH (i.e. many variables), 2: LOW (i.e. only most "important" variables)
+Var_out_lev = 2
+
+# Define base HRU to use
+base_hru_num = 1001
 
 #SNQ_ALL
 Restartdir = "Restart_Recent_noSnow"
@@ -81,18 +88,37 @@ Restartdir = "Restart_Recent_noSnow"
 #    in the Restartdir
 First_Run_number = 40000
 
-# 4) Define Parameters to modify from default values and Define values for each new_param_all
-# SNQ14C restart: Like a snowboard
-#new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede']
-#new_param_val = [           0.000001,             0.0000001,            0.00,         0.00,                  0,  0]
+# User defines parameters to hold constant and parameters to allow to vary
 
-new_param_all = ['tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax'] #,'theta_sat', 'theta_res',  'vGn_alpha',  'vGn_n','k_soil']
-new_param_val = [         273.66,                 1,            0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1] #,          0.401,     0.136,          -0.84,    1.30,   0.0015]
+# Constant parameters (applied to all runs)
+new_param_all = ['tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+new_param_val = [         273.66,                 1,           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
 
+# Parameters to vary
+param_2_vary  = ['densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
 
-# 5) Define which paramter to allow to vary (between min and max in summa_zLocalParamInfo)
-# Note: this overwrites the value given in new_param_val.
-#param_2_vary  = 'mw_exp' 
+# Number of samples from parameter space
+Num_Sam = 3
+
+# For each parameter to vary
+Pvals  = []; # Initialize list of values
+#Pnames = []; # Initialize list of names
+for cP in range(0,len(param_2_vary)):
+        print cP
+        # Get Values of param_2_vary from LocalParamInfo file in settings
+        Pvals.append(Create_new.GetParamVals(param_2_vary[cP],Num_Sam,settings_dir,Site_ID_all[0]))
+        #Pnames.append(param_2_vary+new_param_all)
+
+# Determine all posible combiations here
+Option_permutations = list(itertools.product(*Pvals))
+
+# Combine variable and constant parameters
+Param_valu = []
+for cP in range(0,len(Option_permutations)):
+        Param_valu.append(list(Option_permutations[cP])+new_param_val)
+# Combine parameter names
+Param_name = param_2_vary+new_param_all
+
 
 # 6) Define Process/Methods to change from current
 
@@ -165,14 +191,6 @@ while (cSite < NSites):
     c_Site_ID = Site_ID_all[cSite]
     print c_Site_ID
 
-    # If more than one NPruns, then get value to vary
-    #if NPruns > 1:
-	# Get Vaules of param_2_vary from LocalParamInfo
-	#Pvals =  Create_new_V2.GetParamVals(param_2_vary,NPruns,settings_dir,c_Site_ID)
-	#print Pvals
-	## Find Index specifed parameters (new_param_all)
-	#Iparam = new_param_all.index(param_2_vary)
-    
     #####################################################################################
     # Loop through each Parameter set run (Index from zero)
     #####################################################################################
@@ -182,17 +200,15 @@ while (cSite < NSites):
         # Define current Run ID
         cRID_char = "R_" + str(Run_IDs[cRID])
 	print cRID_char
-
-        # If more than one NPruns, Update
-	#if NPruns > 1:
-	#	# Update new paramter value for param_2_vary in new_param_val
-	#	new_param_val[Iparam] = Pvals[cPR]
 			
         # Define new run paths
 	c_output_dir   = output_dir + c_Site_ID + "/" + cRID_char
         c_settings_dir = settings_dir + c_Site_ID + "/" + cRID_char
         run_output     = c_output_dir + "/Run_output.txt"
-        
+        Flist_file     = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zForcingFileList.txt"
+        Alist_file     = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zLocalAttributes.txt"
+
+
         # Make needed directories
         if not os.path.exists(c_output_dir):
             os.makedirs(c_output_dir)
@@ -204,10 +220,10 @@ while (cSite < NSites):
 
         # Create the file Manager
 	IC_file = ICfiles_list[cPR]
-        Create_new_V2.file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,IC_file,Restartdir)
-        
-	# Create the snow Desicians file
+        #Create_new_V2.file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,IC_file,Restartdir)
+        Create_new.file_manager_restart(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,IC_file,Restartdir,Var_out_lev)
 	
+	# Get length of restart simulation
 	Datein    = datetime.datetime.strptime(IC_file, "%Y-%m-%d_%H_%M")	
 	Datestart = Datein + datetime.timedelta(minutes=timestep)
 	Dateend   = Datein + datetime.timedelta(days=1) # Restart time period hard coded here
@@ -218,8 +234,15 @@ while (cSite < NSites):
 	# Create Desicions file
 	Create_new.Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend)
 
-        # Edit Parameter settings for current run
-        Create_new.ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char)
+	# Create the Parameter settings files (uses multiple HRUs for each parameter set)
+        Create_new.ParamTrial_Multi_hru(Param_name,Param_valu,settings_dir,c_Site_ID,cRID_char)
+
+	# Create the Forcing file
+        NHRUs = len(Param_valu)
+        Create_new.Forcing_file(c_Site_ID,Flist_file,forcing_file,base_hru_num,NHRUs)
+
+        # Create the Local Attributes file
+        Create_new.Local_Attributes_file(Alist_file,base_hru_num,NHRUs)
 
         # Create run output file (overwrites previous)
         if not os.path.exists(run_output):

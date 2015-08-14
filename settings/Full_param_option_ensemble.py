@@ -69,7 +69,7 @@ Site_ID_all = ["SNQ_ALL"]
 First_Run_number = 30002
 
 # SNQ_ALL Recent
-datestart = "2012-10-01 00:00"
+datestart = "2012-10-01 01:00"
 dateend   = "2015-05-11 21:30"
 
 # Name of forcing file to use (found in input_dir/Site_ID_all/)
