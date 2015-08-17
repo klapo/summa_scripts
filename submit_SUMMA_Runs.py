@@ -13,23 +13,12 @@ from settings import Create_new
 #
 ## Instructions ##
 # 1) Modify Input Values  below
-# 2) Run ./submit_SUMMA_Runs.py
+# 2) Update paths (i.e. home_dir     = "/home/wayandn/")
+# 3) Run ./submit_SUMMA_Runs.py
 #
-## Input ##
-#
-# Site_ID_all  				- Site ID
-# Run_IDs				- Run ID values to submit
-# exp_name				- Name of experiment (identifyer for output filename, also used to merge multiple output netcdf files together)
-# jobrun				- Option to run model on 1) Command line, or 2) On Queue
-#
-## File Info ##
 # Created 1/8/2013 - Nic Wayand (nicway@u.washington.edu)
+# Updated 8/16/2015 
 ####################################################################################
-
-#####################################################################################
-# Define Variables/Parameteres Used
-#####################################################################################
-
 
 #####################################################################################
 # User Options - CHECK ALL 4 Required Inputs!
@@ -39,17 +28,17 @@ from settings import Create_new
 Site_ID_all = ["SNQ_ALL"]
 
 # 2) Run ID
-Run_IDs     = [30001] 
+#Run_IDs     = [30002] 
 #Run_IDs = range(40001,40953)
-#Run_IDs = range(15363,15463)
+Run_IDs = range(50565,51151)
 
 # 3) Experiment Name
-exp_name    = "Cont_lr_compac_exp"
+exp_name    = "Cont_Full_opt_exp"
 
 # 4) Run on Command line or in Queue?
 jobrun 	    = 1 # 1 = Command line, 2 = Queue (single job), 3 = Serial Parrallel jobs (note: requires GNU parallel)
 
-# RUN OPTIONS if jobrun==2
+# RUN OPTIONS if jobrun==1
 runJobsSerial = 1 # 1 = jobs run in serial (one at a time), 2 = jobs are submited all at once to command line
 
 # RUN OPTIONS if jobrun==3
