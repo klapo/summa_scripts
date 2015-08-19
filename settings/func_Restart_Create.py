@@ -35,12 +35,20 @@ def Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char
 
 	# Create the Desicians file
 	Create_new.Desicions(c_Decisions,settings_dir,c_Site_ID,cRID_char,datestart,dateend)
-
-	# Creat the Parameter settings files (uses multiple HRUs for each parameter set)
-	Create_new.ParamTrial_Multi_hru(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char)
 	
+	# Check if we call have a single or multiple paramTrial
+	if (type(new_param_all[0]) is list): # Is a list if we have multiple hru (param sets), otherwise it is a float
+		
+		# Creat the Parameter settings files (uses multiple HRUs for each parameter set)
+		Create_new.ParamTrial_Multi_hru(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char)
+		NHRUs = len(new_param_val)
+	else:
+
+		# Creat the Parameter settings files (single param configuration (hru))
+                Create_new.ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char)
+		NHRUs = 1;
+
 	# Create the Forcing file
-	NHRUs = len(new_param_val)
 	Create_new.Forcing_file(c_Site_ID,Flist_file,forcing_file,base_hru_num,NHRUs)
 
 	# Create the Local Attributes file
