@@ -11,7 +11,6 @@ import itertools
 
 # Import FUSE functions
 import func_Restart_Create
-import Create_new_V2
 import Create_new
 
 
@@ -66,7 +65,7 @@ run_exe = main_dir + "bin/summa.exe"
 Site_ID_all = ["SNQ_ALL"]
 
 # Define first run number 
-First_Run_number = 30002
+First_Run_number = 100000
 
 # SNQ_ALL Recent
 datestart = "2012-10-01 01:00"
@@ -115,11 +114,14 @@ snowDenNew         =          ['pahaut_76']  #! (30) choice of method for new sn
 # User defines parameters to hold constant and parameters to allow to vary
 
 # Constant parameters (applied to all runs)
-new_param_all = ['tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
-new_param_val = [         273.66,                 1,           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+#new_param_all = ['a_sn','b_sn','c_sn','tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+#new_param_val = [ 80.0,    1.0,    16.0,        273.16,                 0.5,           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+
+new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+new_param_val = [             0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
 
 # Parameters to vary
-param_2_vary  = ['densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
+param_2_vary = ['tempCritRain','tempRangeTimestep','a_sn','b_sn','c_sn','densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
 
 # Number of samples from parameter space
 Num_Sam = 3
