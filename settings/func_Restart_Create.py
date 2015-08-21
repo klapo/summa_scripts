@@ -3,7 +3,7 @@
 import os
 #import shutil
 #import re
-#import sys
+import sys
 #import datetime
 #import numpy
 #import itertools
@@ -37,16 +37,20 @@ def Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char
 	Create_new.Desicions(c_Decisions,settings_dir,c_Site_ID,cRID_char,datestart,dateend)
 	
 	# Check if we call have a single or multiple paramTrial
-	if (type(new_param_all[0]) is list): # Is a list if we have multiple hru (param sets), otherwise it is a float
-		
+	if (type(new_param_val[0]) is list): # Is a list if we have multiple hru (param sets), otherwise it is a float
+		print "Creating multiple parameter combinations as many hrus"		
 		# Creat the Parameter settings files (uses multiple HRUs for each parameter set)
 		Create_new.ParamTrial_Multi_hru(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char)
 		NHRUs = len(new_param_val)
-	else:
-
+	elif (type(new_param_val[0]) is float):
+		print "Creating single parameter combination for each run (1 hru)"
 		# Creat the Parameter settings files (single param configuration (hru))
                 Create_new.ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char)
 		NHRUs = 1;
+	else:
+		print "could not determine if single or multiple param/hrus are to be used"
+		print new_param_val[0]
+		sys.exit()
 
 	# Create the Forcing file
 	Create_new.Forcing_file(c_Site_ID,Flist_file,forcing_file,base_hru_num,NHRUs)
