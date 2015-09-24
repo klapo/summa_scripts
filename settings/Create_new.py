@@ -25,7 +25,7 @@ def file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char):
 
     # directories
     #c_Site_ID/cRID_char (i.e. SNQ/R_1)
-    SITE_RUN = c_Site_ID + "/" + cRID_char
+    SITE_RUN = c_Site_ID + "/indiv_runs/" + cRID_char
 
     # filename
     new_file = settings_dir + SITE_RUN + "/summa_fileManager_" + c_Site_ID + ".txt"
@@ -82,7 +82,7 @@ def file_Manager_Multi_HRUs(settings_dir,input_dir,output_dir,c_Site_ID,cRID_cha
 
     # directories
     #c_Site_ID/cRID_char (i.e. SNQ/R_1)
-    SITE_RUN = c_Site_ID + "/" + cRID_char
+    SITE_RUN = c_Site_ID + "/indiv_runs/" + cRID_char
 
     # filename
     new_file = settings_dir + SITE_RUN + "/summa_fileManager_" + c_Site_ID + ".txt"
@@ -151,7 +151,7 @@ def file_manager_restart(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,I
 
     # directories
     #c_Site_ID/cRID_char (i.e. SNQ/R_1)
-    SITE_RUN = c_Site_ID + "/" + cRID_char
+    SITE_RUN = c_Site_ID + "/indiv_runs/" + cRID_char
 
     # filename
     new_file = settings_dir + SITE_RUN + "/summa_fileManager_" + c_Site_ID + ".txt"
@@ -218,7 +218,7 @@ def Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend):
     # directories
 
     # filename
-    new_file = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zDecisions_" + c_Site_ID + ".txt"
+    new_file = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zDecisions_" + c_Site_ID + ".txt"
 
     # Open file for reading
     fin = open(new_file,"w")
@@ -325,7 +325,7 @@ def GetParamVals(param_2_vary,NPruns,settings_dir,c_Site_ID):
 def ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char):
 
     # Define new Paramter file
-    new_file          = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
+    new_file          = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
     
     # Open file for writing
     fin = open(new_file,"w")
@@ -362,7 +362,7 @@ def ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char):
 def ParamTrial_Multi_hru(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char):
 
     # Define new Paramter file
-    new_file          = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
+    new_file          = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
 
     # Open file for writing
     fin = open(new_file,"w")

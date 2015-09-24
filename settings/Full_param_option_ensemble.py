@@ -65,14 +65,24 @@ run_exe = main_dir + "bin/summa.exe"
 Site_ID_all = ["SNQ_ALL"]
 
 # Define first run number 
-First_Run_number = 100000
+First_Run_number = 1
 
 # SNQ_ALL Recent
-datestart = "2012-10-01 01:00"
-dateend   = "2015-05-11 21:30"
+#datestart = "2012-10-01 01:00"
+#dateend   = "2015-05-11 21:30"
+
+# SNQ_ALL Historic 
+#datestart = "1988-12-26 00:00"
+#dateend   = "2012-09-30 23:00"
+
+# SNQ_ALL 1989-2015
+datestart = "2000-10-01 01:00"
+dateend   = "2015-05-11 21:00"
 
 # Name of forcing file to use (found in input_dir/Site_ID_all/)
-forcing_file = "summa_zForcingInfo_SNQ_NWAC.txt"
+#forcing_file = "summa_zForcingInfo_SNQ_NWAC.txt"
+#forcing_file = "summa_zForcingInfo_Historic.txt"
+forcing_file = "summa_zForcingInfo_Historic_hrly.txt"
 
 # Specify level of variables to output (1: HIGH (i.e. many variables), 2: LOW (i.e. only most "important" variables)
 Var_out_lev = 2
@@ -104,7 +114,7 @@ astability         =          ['mahrtexp']  #! (21) choice of stability function
 canopySrad         =          ['CLM_2stream']  #! (22) choice of canopy shortwave radiation method
 alb_method         =          ['varDecay']  #! (23) choice of albedo representation
 compaction         =          ['anderson']  #! (24) choice of compaction routine
-snowLayers         =          ['jrdn1991']  #! (25) choice of method to combine and sub-divide snow layers
+snowLayers         =          ['CLM_2010']  #! (25) choice of method to combine and sub-divide snow layers
 thCondSnow         =          ['jrdn1991']  #! (26) choice of thermal conductivity representation for snow
 thCondSoil         =          ['mixConstit']  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =          ['localColumn']  #! (28) choice of method for the spatial representation of groundwater
@@ -114,17 +124,42 @@ snowDenNew         =          ['pahaut_76']  #! (30) choice of method for new sn
 # User defines parameters to hold constant and parameters to allow to vary
 
 # Constant parameters (applied to all runs)
-#new_param_all = ['a_sn','b_sn','c_sn','tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
-#new_param_val = [ 80.0,    1.0,    16.0,        273.16,                 0.5,           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+#new_param_all = ['densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn','a_sn','b_sn','c_sn','tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+#new_param_val = [ 0.0525,    0.02,    2e-06,    0.023,    0.8,    80.0,    1.0,    16.0,        273.16,                 0.5,           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
 
+
+# Basic Method selected parameters
+#new_param_all = ['densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn','a_sn','b_sn','c_sn','tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+#new_param_val = [0.0460,     0.0400,  2.7e-6,   0.023,   0.08,     80.0,    1.0,    36.0,    273.16,                    2.0,          0.05,    0.01,    0.01,    0.5,    1,    0,    0.1,    0.1]
+
+# Best from physical Hist
+#new_param_all = ['constSnowDen','tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+#new_param_val = [76.92,                 273.16,                          3.8750,              0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+
+# Best from typical method Hist
+#new_param_all = ['a_sn','b_sn','c_sn','tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+#new_param_val = [80.0,   1.0,    16.0,                  273.16,                          2,              0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+#param_2_vary = []
+
+
+# Default simulation
 new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
-new_param_val = [             0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+new_param_val = [0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+param_2_vary = []
+
+
+#new_param_all = ['a_sn','b_sn','c_sn','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+#new_param_val = [80.0,   1.0,    16.0,     0.05,        0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+
 
 # Parameters to vary
-param_2_vary = ['tempCritRain','tempRangeTimestep','a_sn','b_sn','c_sn','densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
+#param_2_vary = ['tempCritRain','tempRangeTimestep','a_sn','b_sn','c_sn','densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
+
+#param_2_vary = ['tempCritRain','tempRangeTimestep']
+#param_2_vary  = ['densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
 
 # Number of samples from parameter space
-Num_Sam = 3
+Num_Sam = 1
 
 # For each parameter to vary
 Pvals  = []; # Initialize list of values
@@ -136,12 +171,13 @@ for cP in range(0,len(param_2_vary)):
 	#Pnames.append(param_2_vary+new_param_all)
 
 # Determine all posible combiations here
-Option_permutations = list(itertools.product(*Pvals))
+Parmeter_permutations = list(itertools.product(*Pvals))
 
 # Combine variable and constant parameters
 Param_valu = []
-for cP in range(0,len(Option_permutations)):
-	Param_valu.append(list(Option_permutations[cP])+new_param_val)
+for cP in range(0,len(Parmeter_permutations)):
+	Param_valu.append(list(Parmeter_permutations[cP])+new_param_val)
+
 # Combine parameter names	
 Param_name = param_2_vary+new_param_all
 

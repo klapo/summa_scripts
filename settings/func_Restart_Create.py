@@ -17,11 +17,11 @@ import Create_new
 def Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char,c_Decisions,new_param_all,new_param_val,datestart,dateend,forcing_file,base_hru_num,Var_out_lev):
 	
 	# Define new run paths for current run
-	c_output_dir   = output_dir   + c_Site_ID + "/" + cRID_char
-	c_settings_dir = settings_dir + c_Site_ID + "/" + cRID_char
+	c_output_dir   = output_dir   + c_Site_ID + "/indiv_runs/" + cRID_char
+	c_settings_dir = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char
 	run_output     = c_output_dir + "/Run_output.txt"
-	Flist_file     = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zForcingFileList.txt"	
-	Alist_file     = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zLocalAttributes.txt"	
+	Flist_file     = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zForcingFileList.txt"	
+	Alist_file     = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zLocalAttributes.txt"	
 
 	# Make needed directories
 	if not os.path.exists(c_output_dir):

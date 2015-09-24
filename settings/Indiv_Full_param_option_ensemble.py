@@ -61,20 +61,27 @@ main_dir = "/home/wayandn/summa/"
 settings_dir = main_dir + "settings/"
 input_dir    = main_dir + "input/"
 output_dir   = main_dir + "output/"
+indiv_runs   = "indiv_runs/"
 run_exe = main_dir + "bin/summa.exe"
 
 # Define Sites to Use
 Site_ID_all = ["SNQ_ALL"]
 
 # Define first run number 
-First_Run_number = 100001
+First_Run_number = 1
 
 # SNQ_ALL Recent
-datestart = "2012-10-01 01:00"
-dateend   = "2015-05-11 21:30"
+#datestart = "2012-10-01 01:00"
+#dateend   = "2015-05-11 21:30"
+
+# SNQ_ALL Historical hourly
+datestart = "2000-10-01 00:00"
+dateend   = "2015-05-11 21:00"
+
 
 # Name of forcing file to use (found in input_dir/Site_ID_all/)
-forcing_file = "summa_zForcingInfo_SNQ_NWAC.txt"
+#forcing_file = "summa_zForcingInfo_SNQ_NWAC.txt"
+forcing_file = "SNQ_Hist_Historic_WY_1989_2015.txt"
 
 # Specify level of variables to output (1: HIGH (i.e. many variables), 2: LOW (i.e. only most "important" variables)
 Var_out_lev = 2
@@ -106,7 +113,7 @@ astability         =          ['mahrtexp']  #! (21) choice of stability function
 canopySrad         =          ['CLM_2stream']  #! (22) choice of canopy shortwave radiation method
 alb_method         =          ['varDecay']  #! (23) choice of albedo representation
 compaction         =          ['anderson']  #! (24) choice of compaction routine
-snowLayers         =          ['jrdn1991']  #! (25) choice of method to combine and sub-divide snow layers
+snowLayers         =          ['CLM_2010']  #! (25) choice of method to combine and sub-divide snow layers
 thCondSnow         =          ['jrdn1991']  #! (26) choice of thermal conductivity representation for snow
 thCondSoil         =          ['mixConstit']  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =          ['localColumn']  #! (28) choice of method for the spatial representation of groundwater
@@ -123,10 +130,11 @@ new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI',
 new_param_val = [             0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
 
 # Parameters to vary
-param_2_vary = ['tempCritRain','tempRangeTimestep','a_sn','b_sn','c_sn','densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
+#param_2_vary = ['tempCritRain','tempRangeTimestep','a_sn','b_sn','c_sn','densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
+param_2_vary = []
 
 # Number of samples from parameter space
-Num_Sam = 3
+Num_Sam = 1
 
 # For each parameter to vary
 Pvals  = []; # Initialize list of values
@@ -144,6 +152,7 @@ Option_permutations = list(itertools.product(*Pvals))
 Param_valu = []
 for cP in range(0,len(Option_permutations)):
 	Param_valu.append(list(Option_permutations[cP])+new_param_val)
+
 # Combine parameter names	
 Param_name = param_2_vary+new_param_all
 
@@ -160,7 +169,7 @@ Option_permutations = list(itertools.product(*Decisions_ALL))
 # Determine total number of runs to submit
 NoptioRuns = len(Option_permutations)
 NparamRuns = len(Param_valu)
-NrunsTot = NoptioRuns + NparamRuns
+NrunsTot = NoptioRuns * NparamRuns
 print("Total number of options configurations ",NoptioRuns)
 print("Total number of param configurations ",NparamRuns)
 print("Total number of Runs ",NrunsTot)
@@ -198,7 +207,12 @@ while (cSite < NSites):
 
 		cRID_char = "R_" + str(Run_IDs[cRun_tot])
         	print cRID_char
-		
+	
+		# Make directory if not exist
+		#dir_new = settings_dir + c_Site_ID + "/" + indiv_runs + "/" + cRID_char
+		#if not os.path.exists(dir_new):
+	#		os.makedirs(dir_new)
+	
 		# Create each daily settings file for this simulation
         	func_Restart_Create.Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char,c_Decisions,Param_name,Param_valu[cRun_par],datestart,dateend,forcing_file,base_hru_num,Var_out_lev)
 		
