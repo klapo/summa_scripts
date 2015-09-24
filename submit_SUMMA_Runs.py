@@ -28,12 +28,23 @@ from settings import Create_new
 Site_ID_all = ["SNQ_ALL"]
 
 # 2) Run ID
-#Run_IDs     = [30002] 
-#Run_IDs = range(40001,40953)
-Run_IDs = range(50565,51151)
+#Run_IDs     = [80073,80076,80078,80079,80080,80095,80096,80097,80102,80115,80438,80446,80486,80494,80495,80496,80497,80095,80498,80512,80517,80518,80519,80790,80826] 
+Run_IDs = [1]
+#Run_IDs = range(9672,9680)
+#Run_IDs = range(90001,90953)
+
+# Define chunked runs if we have many
+#R_S = 50001
+#R_E = 58680
+#npp = 10
+#cR = int(sys.argv[1])
+#steps = (R_E-R_S)/npp
+#Breaklist = xrange(R_S,R_E+1,steps)
+#Run_IDs = range(Breaklist[cR-1],Breaklist[cR])
+#print Run_IDs[0]
 
 # 3) Experiment Name
-exp_name    = "Cont_Full_opt_exp"
+exp_name    = "Cont_Hist_1hr_test"
 
 # 4) Run on Command line or in Queue?
 jobrun 	    = 1 # 1 = Command line, 2 = Queue (single job), 3 = Serial Parrallel jobs (note: requires GNU parallel)
@@ -93,8 +104,8 @@ while (cSite < NSites):
         
         # Define paths
         cRID_char = "R_" + str(Run_IDs[cRID])
-        c_fileManager    = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_fileManager_" + c_Site_ID + ".txt"
-        c_output_dir     = output_dir + c_Site_ID + "/" + cRID_char
+        c_fileManager    = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_fileManager_" + c_Site_ID + ".txt"
+        c_output_dir     = output_dir + c_Site_ID + "/indiv_runs/" + cRID_char
         run_output       = c_output_dir + "/Run_output.txt"
         print c_fileManager 
         # Check Run files exists
