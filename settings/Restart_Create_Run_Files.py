@@ -34,11 +34,6 @@ import Create_new
 # Created 1/8/2013 - Nic Wayand (nicway@u.washington.edu)
 ####################################################################################
 
-def my_range(start, end, step):
-        while start <= end:
-            yield start
-            start += step
-
 #####################################################################################
 # Define Variables/Parameteres Used
 #####################################################################################
@@ -60,20 +55,17 @@ input_dir    = main_dir + "input/"
 output_dir   = main_dir + "output/"
 run_exe = main_dir + "bin/summa.exe"
 
-
-# 1) Run IDs
-#Run_IDs = my_range(20,30,1);
-#Run_IDs = [1];
-
-# 2) Define Sites to Use
+# Define Sites to Use
 Site_ID_all = ["SNQ_ALL"]
 #Site_ID_all = ["SNQ14C"]
 
-# 3) Define time step of runs
-timestep = 30; # in minutes
+# Define time step of runs
+timestep = 60; # in minutes
 
 # Name of forcing file to use (found in input_dir/Site_ID_all/)
-forcing_file = "summa_zForcingInfo_SNQ_NWAC.txt"
+#forcing_file = "summa_zForcingInfo_SNQ_NWAC.txt"
+#forcing_file = "summa_zForcingInfo_Historic.txt"
+forcing_file = "summa_zForcingInfo_Historic_hrly.txt"
 
 # Specify level of variables to output (1: HIGH (i.e. many variables), 2: LOW (i.e. only most "important" variables)
 Var_out_lev = 2
@@ -82,20 +74,41 @@ Var_out_lev = 2
 base_hru_num = 1001
 
 #SNQ_ALL
-Restartdir = "Restart_Recent_noSnow"
+#Restartdir = "Restart_Recent_noSnow"
+#Restartdir = "Restart_Hist_noSnow"
+Restartdir = "Restart_Full_noSNow"
 
 # 3) Define first run number (i.e /Settings/R_X), for restart run. Number of restart runs is determined from the number of restart files
 #    in the Restartdir
-First_Run_number = 40000
+First_Run_number = 7000
 
 # User defines parameters to hold constant and parameters to allow to vary
 
+# Partitioning experiment
 # Constant parameters (applied to all runs)
+#new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+#new_param_val = [             0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+
+# New denesity experiemnt
 new_param_all = ['tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
-new_param_val = [         273.66,                 1,           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+new_param_val = [        272.65,                2.75,            0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+
+
+# Constant parameters (applied to all runs)
+#new_param_all = ['a_sn','b_sn','c_sn','tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+#new_param_val = [ 80.0,    1.0,    16.0,         273.16,                 0.5,           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+
+#new_param_all = ['constSnowDen','tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+#new_param_val = [76.92,               273.16,                          3.8750,             0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
 
 # Parameters to vary
-param_2_vary  = ['densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
+#param_2_vary  = ['tempCritRain','tempRangeTimestep']
+#param_2_vary  = ['densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
+param_2_vary = ['newSnowDenMin','newSnowDenMult','newSnowDenScal'] 
+#param_2_vary = ['a_sn','b_sn','c_sn']
+#param_2_vary = ['newSnowDenMin','d_sn']
+#param_2_vary = ['constSnowDen']
+
 
 # Number of samples from parameter space
 Num_Sam = 3
@@ -139,19 +152,19 @@ bcLowrTdyn         =          'zeroFlux'  #! (14) type of lower boundary conditi
 bcUpprSoiH         =          'liq_flux'  #! (15) type of upper boundary condition for soil hydrology
 bcLowrSoiH         =          'drainage'  #! (16) type of lower boundary condition for soil hydrology
 veg_traits         =      'CM_QJRMS1998'  #! (17) choice of parameterization for vegetation roughness length and displacement height
-canopyEmis         =          'simplExp'  #! (18) choice of parameterization for canopy emissivity
-snowIncept         =         'lightSnow'  #! (19) choice of parameterization for snow interception
+canopyEmis         =          'difTrans'  #! (18) choice of parameterization for canopy emissivity
+snowIncept         =         'stickySnow'  #! (19) choice of parameterization for snow interception
 windPrfile         =    'logBelowCanopy'  #! (20) choice of wind profile through the canopy
 astability         =          'mahrtexp'  #! (21) choice of stability function
 canopySrad         =       'CLM_2stream'  #! (22) choice of canopy shortwave radiation method
 alb_method         =          'varDecay'  #! (23) choice of albedo representation
 compaction         =          'anderson'  #! (24) choice of compaction routine
-snowLayers         =          'jrdn1991'  #! (25) choice of method to combine and sub-divide snow layers
+snowLayers         =          'CLM_2010'  #! (25) choice of method to combine and sub-divide snow layers
 thCondSnow         =          'jrdn1991'  #! (26) choice of thermal conductivity representation for snow
 thCondSoil         =        'mixConstit'  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =       'localColumn'  #! (28) choice of method for the spatial representation of groundwater
 subRouting         =          'timeDlay'  #! (29) choice of method for sub-grid routing
-snowDenNew         =         'pahaut_76'  #! (30) choice of method for new snow density
+snowDenNew         =         'hedAndPom'  #! (30) choice of method for new snow density
 
 # Store all decisions
 Decisions_ALL = [soilCatTbl,vegeParTbl,soilStress,stomResist,num_method,fDerivMeth,LAI_method,f_Richards,groundwatr,hc_profile,bcUpprTdyn,bcLowrTdyn,bcUpprSoiH,bcLowrSoiH,veg_traits,canopyEmis,snowIncept,windPrfile,astability,canopySrad,alb_method,compaction,snowLayers,thCondSnow,thCondSoil,spatial_gw,subRouting,snowDenNew];
@@ -202,11 +215,11 @@ while (cSite < NSites):
 	print cRID_char
 			
         # Define new run paths
-	c_output_dir   = output_dir + c_Site_ID + "/" + cRID_char
-        c_settings_dir = settings_dir + c_Site_ID + "/" + cRID_char
+	c_output_dir   = output_dir + c_Site_ID + "/indiv_runs/" + cRID_char
+        c_settings_dir = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char
         run_output     = c_output_dir + "/Run_output.txt"
-        Flist_file     = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zForcingFileList.txt"
-        Alist_file     = settings_dir + c_Site_ID + "/" + cRID_char + "/summa_zLocalAttributes.txt"
+        Flist_file     = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zForcingFileList.txt"
+        Alist_file     = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zLocalAttributes.txt"
 
 
         # Make needed directories

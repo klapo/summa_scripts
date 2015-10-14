@@ -68,20 +68,26 @@ run_exe = main_dir + "bin/summa.exe"
 Site_ID_all = ["SNQ_ALL"]
 
 # Define first run number 
-First_Run_number = 1
+First_Run_number = 40000
 
 # SNQ_ALL Recent
 #datestart = "2012-10-01 01:00"
 #dateend   = "2015-05-11 21:30"
 
 # SNQ_ALL Historical hourly
-datestart = "2000-10-01 00:00"
-dateend   = "2015-05-11 21:00"
+#datestart = "2000-10-01 00:00"
+#dateend   = "2015-05-11 21:00"
+
+# SNQ_ALL 1989-2015
+datestart = "2002-10-01 01:00"
+#dateend   = "2015-05-11 21:00"
+dateend   = "2010-10-01 21:00"
 
 
 # Name of forcing file to use (found in input_dir/Site_ID_all/)
 #forcing_file = "summa_zForcingInfo_SNQ_NWAC.txt"
-forcing_file = "SNQ_Hist_Historic_WY_1989_2015.txt"
+#forcing_file = "SNQ_Hist_Historic_WY_1989_2015.txt"
+forcing_file = "summa_zForcingInfo_Historic_hrly.txt"
 
 # Specify level of variables to output (1: HIGH (i.e. many variables), 2: LOW (i.e. only most "important" variables)
 Var_out_lev = 2
@@ -118,7 +124,7 @@ thCondSnow         =          ['jrdn1991']  #! (26) choice of thermal conductivi
 thCondSoil         =          ['mixConstit']  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =          ['localColumn']  #! (28) choice of method for the spatial representation of groundwater
 subRouting         =          ['timeDlay']  #! (29) choice of method for sub-grid routing
-snowDenNew         =          ['pahaut_76']  #! (30) choice of method for new snow density
+snowDenNew         =          ['hedAndPom']  #! (30) choice of method for new snow density
 
 # User defines parameters to hold constant and parameters to allow to vary
 
@@ -131,10 +137,20 @@ new_param_val = [             0.05,             0.01,            0.01,         0
 
 # Parameters to vary
 #param_2_vary = ['tempCritRain','tempRangeTimestep','a_sn','b_sn','c_sn','densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
-param_2_vary = []
+#param_2_vary = []
+# HedAndPom
+param_2_vary = ['tempCritRain','tempRangeTimestep','densScalOvrbdn','tempScalOvrbdn','newSnowDenMin','newSnowDenMult','newSnowDenScal']
+#Pahaut 1976
+#param_2_vary = ['tempCritRain','tempRangeTimestep','a_sn','b_sn','c_sn','densScalOvrbdn','tempScalOvrbdn']
+# anderson
+#param_2_vary = ['tempCritRain','tempRangeTimestep','densScalOvrbdn','tempScalOvrbdn','newSnowDenMin','d_sn']
+#constantDens
+#param_2_vary = ['tempCritRain','tempRangeTimestep','constSnowDen','densScalOvrbdn','tempScalOvrbdn']
+
+
 
 # Number of samples from parameter space
-Num_Sam = 1
+Num_Sam = 3
 
 # For each parameter to vary
 Pvals  = []; # Initialize list of values

@@ -11,7 +11,7 @@ echo Processing Run $RS
 # User Define path to SUMMA output
 set Basedir = /home/wayandn/summa/output/
 # Assumes output is structured in output/Sitename/R_[Run number here]/
-set Curdir  = $Basedir$SITE/R_$RS/
+set Curdir  = $Basedir$SITE/indiv_runs/R_$RS/
 echo $Curdir
 
 # Ignores all spin up files
@@ -27,7 +27,7 @@ echo $files2concat
 mkdir -p $Basedir$SITE'/'$expname
 
 # Combine all files
-ncrcat -O -h $files2concat $Basedir$SITE'/'$expname'/'$SITE'_combined_'$expname'_time_dim.nc'
+ncrcat --64 -O -h $files2concat $Basedir$SITE'/'$expname'/'$SITE'_combined_'$expname'_time_dim.nc'
 
 echo Done Merging restart files together
 echo Now changing record dimension from time to param

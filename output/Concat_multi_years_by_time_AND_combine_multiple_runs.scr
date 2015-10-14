@@ -60,13 +60,13 @@ set files2concat_2=''
 cd $Basedir$SITE'/'$expname
 
 # Remove existing files!
-rm -f $Basedir$SITE'/'$expname'/*'
+#rm -f $Basedir$SITE'/'$expname'/*'
 
 # Make list
 set files2concat_2 = `ls --ignore='*.txt'`
 
 # Combine all files
-ncrcat -O -h $files2concat_2 $Basedir$SITE'/'$expname'/'$SITE'_combined_'$expname'.nc'
+ncrcat --64 -O -h $files2concat_2 $Basedir$SITE'/'$expname'/'$SITE'_combined_'$expname'.nc'
 
 # Clean up previous files
 rm -f $files2concat_2

@@ -65,7 +65,7 @@ run_exe = main_dir + "bin/summa.exe"
 Site_ID_all = ["SNQ_ALL"]
 
 # Define first run number 
-First_Run_number = 1
+First_Run_number = 4
 
 # SNQ_ALL Recent
 #datestart = "2012-10-01 01:00"
@@ -76,8 +76,9 @@ First_Run_number = 1
 #dateend   = "2012-09-30 23:00"
 
 # SNQ_ALL 1989-2015
-datestart = "2000-10-01 01:00"
-dateend   = "2015-05-11 21:00"
+datestart = "2002-10-01 01:00"
+#dateend   = "2015-05-11 21:00"
+dateend   = "2010-10-01 21:00"
 
 # Name of forcing file to use (found in input_dir/Site_ID_all/)
 #forcing_file = "summa_zForcingInfo_SNQ_NWAC.txt"
@@ -119,13 +120,14 @@ thCondSnow         =          ['jrdn1991']  #! (26) choice of thermal conductivi
 thCondSoil         =          ['mixConstit']  #! (27) choice of thermal conductivity representation for soil
 spatial_gw         =          ['localColumn']  #! (28) choice of method for the spatial representation of groundwater
 subRouting         =          ['timeDlay']  #! (29) choice of method for sub-grid routing
-snowDenNew         =          ['pahaut_76']  #! (30) choice of method for new snow density
+snowDenNew         =          ['hedAndPom']  #! (30) choice of method for new snow density
 
 # User defines parameters to hold constant and parameters to allow to vary
 
 # Constant parameters (applied to all runs)
-#new_param_all = ['densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn','a_sn','b_sn','c_sn','tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
-#new_param_val = [ 0.0525,    0.02,    2e-06,    0.023,    0.8,    80.0,    1.0,    16.0,        273.16,                 0.5,           0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+new_param_all = ['newSnowDenMin','newSnowDenMult','newSnowDenScal','tempCritRain','tempRangeTimestep','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+new_param_val = [           75.0,            25.0,             1.0,           272.66,            2.75,     0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+param_2_vary = ['densScalOvrbdn','tempScalOvrbdn','base_visc']
 
 
 # Basic Method selected parameters
@@ -143,9 +145,9 @@ snowDenNew         =          ['pahaut_76']  #! (30) choice of method for new sn
 
 
 # Default simulation
-new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
-new_param_val = [0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
-param_2_vary = []
+#new_param_all = ['heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
+#new_param_val = [0.05,             0.01,            0.01,         0.5,                  1,         0, 0.1, 0.1]
+#param_2_vary = []
 
 
 #new_param_all = ['a_sn','b_sn','c_sn','heightCanopyTop','heightCanopyBottom','winterSAI','summerLAI','maxMassVegetation','f_impede','rootingDepth','zmax']
@@ -153,13 +155,22 @@ param_2_vary = []
 
 
 # Parameters to vary
-#param_2_vary = ['tempCritRain','tempRangeTimestep','a_sn','b_sn','c_sn','densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
-
+#param_2_vary = ['tempCritRain','tempRangeTimestep','a_sn','b_sn','c_sn','constSnowDen','densScalOvrbdn','tempScalOvrbdn','newSnowDenMin','newSnowDenMult','newSnowDenScal','d_sn']
+#param_2_vary = ['constSnowDen']
 #param_2_vary = ['tempCritRain','tempRangeTimestep']
 #param_2_vary  = ['densScalGrowth','tempScalGrowth','grainGrowthRate','densScalOvrbdn','tempScalOvrbdn']
 
+
+# Clearing Forest Simulations
+#new_param_all = []
+#new_param_val = []
+#param_2_vary = ['constSnowDen']
+
+
+
+
 # Number of samples from parameter space
-Num_Sam = 1
+Num_Sam = 3
 
 # For each parameter to vary
 Pvals  = []; # Initialize list of values

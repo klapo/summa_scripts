@@ -11,14 +11,22 @@ rm -f $outfile
 
 # For each run output directory (i.e. R_3)
 while ( $RS <= $RE )
-echo Processing Run $RS
+#echo Processing Run $RS
 #echo Processing Run $RS >> $outfile
 
-set Curdir  = $Basedir$SITE/R_$RS/
+set Curdir  = $Basedir$SITE/indiv_runs/R_$RS/
 
-echo `awk '/ERROR/' $Curdir'Run_output.txt'`
-awk '/ERROR/' $Curdir'Run_output.txt' >> $outfile 
+#echo `awk '/ERROR/' $Curdir'Run_output.txt'`
+awk '/ERROR/ { print "'"$RS"'" ","}' $Curdir'Run_output.txt' >> $outfile 
 
+#if (`grep -l "FORTRAN STOP: finished simulation" $Curdir'Run_output.txt' > /dev/null`) then
+#        echo OK
+#else
+#        echo $RS 
+#	echo $RS >> $outfile
+#endif
+
+#awk '/ERROR/ { print "'"$RS"'" $0}' $Curdir'Run_output.txt' >> $outfile
 
 @ RS++
 

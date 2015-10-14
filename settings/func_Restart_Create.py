@@ -5,7 +5,7 @@ import os
 #import re
 import sys
 #import datetime
-#import numpy
+import numpy as np
 #import itertools
 
 # Import FUSE functions
@@ -42,7 +42,7 @@ def Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char
 		# Creat the Parameter settings files (uses multiple HRUs for each parameter set)
 		Create_new.ParamTrial_Multi_hru(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char)
 		NHRUs = len(new_param_val)
-	elif (type(new_param_val[0]) is float):
+	elif (type(new_param_val[0]) is np.float64 or type(new_param_val[0]) is float):
 		print "Creating single parameter combination for each run (1 hru)"
 		# Creat the Parameter settings files (single param configuration (hru))
                 Create_new.ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char)
@@ -50,6 +50,7 @@ def Create_Restart(settings_dir,input_dir,output_dir,run_exe,c_Site_ID,cRID_char
 	else:
 		print "could not determine if single or multiple param/hrus are to be used"
 		print new_param_val[0]
+		print type(new_param_val[0])
 		sys.exit()
 
 	# Create the Forcing file
