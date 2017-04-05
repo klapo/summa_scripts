@@ -5,37 +5,31 @@ import re
 import sys
 import numpy
 
+'''
+This script holds functions to make new settings files:
+    summa_file_Manager_X.txt
+    summa_zDecisions_X.txt
+    summa_zParamTrial_X.txt
+    pbd.cmd
+'''
 
 
-# Created 01/07/2013 - Nic Wayand (nicway@u.washington.edu)
-
-# This script holds functions to make new settings files:
-# summa_file_Manager_X.txt
-# summa_zDecisions_X.txt
-# summa_zParamTrial_X.txt
-# pbd.cmd
-
-####################################################
-# Code
-####################################################
-
-
-# Create new file Manager
-def file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char):
-
+def file_Manager(settings_dir, input_dir, output_dir, c_Site_ID, cRID_char):
+    ####################################################
+    # Create new file Manager
     # directories
-    #c_Site_ID/cRID_char (i.e. SNQ/R_1)
+    # c_Site_ID/cRID_char (i.e. SNQ/R_1)
     SITE_RUN = c_Site_ID + "/indiv_runs/" + cRID_char
 
     # filename
     new_file = settings_dir + SITE_RUN + "/summa_fileManager_" + c_Site_ID + ".txt"
 
     # Open file for reading
-    fin = open(new_file,"w")
+    fin = open(new_file, "w")
 
     # Print header Info
     fin.write("SUMMA_FILE_MANAGER_V1.0\n! Comment line:\n! *** paths (must be in single quotes)\n")
-    
+
     # Print paths (ORDER IS IMPORTANT!!!)
     fin.write("'" + settings_dir + "'          ! SETNGS_PATH\n")
     fin.write("'" + input_dir + c_Site_ID + "/'         ! INPUT_PATH\n")
@@ -67,7 +61,6 @@ def file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char):
 
     # paths that change for each run
     fin.write("'" + SITE_RUN + "/summa_zParamTrial_" + c_Site_ID + ".txt'           ! PARAMETER_TRIAL = trial values for model parameters\n")
-    #fin.write("'/summa_zParamTrial_Restart_part.txt'           ! PARAMETER_TRIAL = trial values for model parameters\n")
     fin.write("'" + c_Site_ID + "_" + cRID_char + "'                                        ! OUTPUT_PREFIX\n")
 
     # Close file
@@ -77,18 +70,19 @@ def file_Manager(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char):
 
     return
 
-# Create new file Manager if ther are multiple HRUs
-def file_Manager_Multi_HRUs(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,Var_out_lev):
 
+def file_Manager_Multi_HRUs(settings_dir, input_dir, output_dir, c_Site_ID, cRID_char, Var_out_lev):
+    ####################################################
+    # Create new file Manager if ther are multiple HRUs
     # directories
-    #c_Site_ID/cRID_char (i.e. SNQ/R_1)
+    # c_Site_ID/cRID_char (i.e. SNQ/R_1)
     SITE_RUN = c_Site_ID + "/indiv_runs/" + cRID_char
 
     # filename
     new_file = settings_dir + SITE_RUN + "/summa_fileManager_" + c_Site_ID + ".txt"
 
     # Open file for reading
-    fin = open(new_file,"w")
+    fin = open(new_file, "w")
 
     # Print header Info
     fin.write("SUMMA_FILE_MANAGER_V1.0\n! Comment line:\n! *** paths (must be in single quotes)\n")
@@ -111,16 +105,14 @@ def file_Manager_Multi_HRUs(settings_dir,input_dir,output_dir,c_Site_ID,cRID_cha
               "'meta/summa_zForceMeta.txt'                          ! META_FORCE       = metadata for model forcing variables\n"
               "'meta/summa_zLocalParamMeta.txt'                     ! META_LOCALPARAM  = metadata for local model parameters\n")
     # Option for level of output variables (helps reduce size of netcdf files)
-    if Var_out_lev==1:
-	fin.write("'meta/summa_zLocalModelVarMeta.txt'                  ! META_LOCALMVAR   = metadata for local model variables\n")
-    elif Var_out_lev==2:
-	fin.write("'meta/summa_zLocalModelVarMeta.txt.light'                  ! META_LOCALMVAR   = metadata for local model variables\n")
+    if Var_out_lev == 1:
+        fin.write("'meta/summa_zLocalModelVarMeta.txt'                  ! META_LOCALMVAR   = metadata for local model variables\n")
+    elif Var_out_lev == 2:
+        fin.write("'meta/summa_zLocalModelVarMeta.txt.light'                  ! META_LOCALMVAR   = metadata for local model variables\n")
     else:
-	print "Var_out_lev must be option 1 or 2"
-	return
+        print("Var_out_lev must be option 1 or 2")
+        return
 
-    # Cont. printing
-    
     fin.write("'meta/summa_zLocalModelIndexMeta.txt'                ! META_INDEX       = metadata for model indices\n"
               "'meta/summa_zBasinParamMeta.txt'                     ! META_BASINPARAM  = metadata for basin-average model parameters\n"
               "'meta/summa_zBasinModelVarMeta.txt'                  ! META_BASINMVAR   = metadata for basin-average model variables\n")
@@ -134,7 +126,6 @@ def file_Manager_Multi_HRUs(settings_dir,input_dir,output_dir,c_Site_ID,cRID_cha
 
     # paths that change for each run
     fin.write("'" + SITE_RUN + "/summa_zParamTrial_" + c_Site_ID + ".txt'           ! PARAMETER_TRIAL = trial values for model parameters\n")
-    #fin.write("'/summa_zParamTrial_Restart_part.txt'           ! PARAMETER_TRIAL = trial values for model parameters\n")
     fin.write("'" + c_Site_ID + "_" + cRID_char + "'                                        ! OUTPUT_PREFIX\n")
 
     # Close file
@@ -145,19 +136,25 @@ def file_Manager_Multi_HRUs(settings_dir,input_dir,output_dir,c_Site_ID,cRID_cha
     return
 
 
-
-# Create new file Manager (For Restart simulations)
-def file_manager_restart(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,IC_file,Restartdir,Var_out_lev):
-
+def file_manager_restart(settings_dir,
+                         input_dir,
+                         output_dir,
+                         c_Site_ID,
+                         cRID_char,
+                         IC_file,
+                         Restartdir,
+                         Var_out_lev):
+    ####################################################
+    # Create new file Manager (For Restart simulations)
     # directories
-    #c_Site_ID/cRID_char (i.e. SNQ/R_1)
+    # c_Site_ID/cRID_char (i.e. SNQ/R_1)
     SITE_RUN = c_Site_ID + "/indiv_runs/" + cRID_char
 
     # filename
     new_file = settings_dir + SITE_RUN + "/summa_fileManager_" + c_Site_ID + ".txt"
 
     # Open file for reading
-    fin = open(new_file,"w")
+    fin = open(new_file, "w")
 
     # Print header Info
     fin.write("SUMMA_FILE_MANAGER_V1.0\n! Comment line:\n! *** paths (must be in single quotes)\n")
@@ -180,13 +177,13 @@ def file_manager_restart(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,I
               "'meta/summa_zForceMeta.txt'                          ! META_FORCE       = metadata for model forcing variables\n"
               "'meta/summa_zLocalParamMeta.txt'                     ! META_LOCALPARAM  = metadata for local model parameters\n")
     # Option for level of output variables (helps reduce size of netcdf files)
-    if Var_out_lev==1:
-	fin.write("'meta/summa_zLocalModelVarMeta.txt'                  ! META_LOCALMVAR   = metadata for local model variables\n")
-    elif Var_out_lev==2:
-	fin.write("'meta/summa_zLocalModelVarMeta.txt.light'                  ! META_LOCALMVAR   = metadata for local model variables\n")
+    if Var_out_lev == 1:
+        fin.write("'meta/summa_zLocalModelVarMeta.txt'                  ! META_LOCALMVAR   = metadata for local model variables\n")
+    elif Var_out_lev == 2:
+        fin.write("'meta/summa_zLocalModelVarMeta.txt.light'                  ! META_LOCALMVAR   = metadata for local model variables\n")
     else:
-	print "Var_out_lev must be option 1 or 2"
-	return
+        print "Var_out_lev must be option 1 or 2"
+        return
 
     # Cont. printing
     fin.write("'meta/summa_zLocalModelIndexMeta.txt'                ! META_INDEX       = metadata for model indices\n"
@@ -197,12 +194,11 @@ def file_manager_restart(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,I
     fin.write("'" + SITE_RUN + "/summa_zLocalAttributes.txt'              ! LOCAL_ATTRIBUTES = local attributes\n"
               "'" + c_Site_ID + "/summa_zLocalParamInfo.txt'             ! LOCALPARAM_INFO  = default values and constraints for local model parameters\n"
               "'" + c_Site_ID + "/summa_zBasinParamInfo.txt'             ! BASINPARAM_INFO  = default values and constraints for basin-average model parameters\n"
-              "'" + SITE_RUN  + "/summa_zForcingFileList.txt'                ! FORCING_FILELIST = list of files used in each HRU\n"
+              "'" + SITE_RUN + "/summa_zForcingFileList.txt'                ! FORCING_FILELIST = list of files used in each HRU\n"
               "'" + c_Site_ID + "/" + Restartdir + "/" + IC_file + "'              ! MODEL_INITCOND  = model initial conditions\n")
 
     # paths that change for each run
     fin.write("'" + SITE_RUN + "/summa_zParamTrial_" + c_Site_ID + ".txt'           ! PARAMETER_TRIAL = trial values for model parameters\n")
-    #fin.write("'" + c_Site_ID + "/summa_zParamTrial_Restart_part.txt'           ! PARAMETER_TRIAL = trial values for model parameters\n")
     fin.write("'" + c_Site_ID + "_" + cRID_char + "'                                        ! OUTPUT_PREFIX\n")
 
     # Close file
@@ -212,16 +208,16 @@ def file_manager_restart(settings_dir,input_dir,output_dir,c_Site_ID,cRID_char,I
 
     return
 
-# Create new Decision file
-def Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend):
 
+def Desicions(Decisions_ALL, settings_dir, c_Site_ID, cRID_char, datestart, dateend):
+    ####################################################
+    # Create new Decision file
     # directories
-
     # filename
     new_file = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zDecisions_" + c_Site_ID + ".txt"
 
     # Open file for reading
-    fin = open(new_file,"w")
+    fin = open(new_file, "w")
 
     # Print header info
     fin.write("! ***********************************************************************************************************************\n"
@@ -237,73 +233,74 @@ def Desicions(Decisions_ALL,settings_dir,c_Site_ID,cRID_char,datestart,dateend):
               "simulFinsh              '" + dateend + "'  ! (02) simulation end time -- must be in single quotes\n"
               "! ***********************************************************************************************************************\n")
     # Print Desicians (Decisions_ALL indexed by zero)
-    fin.write("soilCatTbl                      " + Decisions_ALL[0]  + " ! (03) soil-category dateset\n")
-    fin.write("vegeParTbl                      " + Decisions_ALL[1]  + " ! (04) vegetation category dataset\n")
-    fin.write("soilStress                      " + Decisions_ALL[2]  + " ! (05) choice of function for the soil moisture control on stomatal resistance\n")
-    fin.write("stomResist                      " + Decisions_ALL[3]  + " ! (06) choice of function for stomatal resistance\n")
+    fin.write("soilCatTbl                      " + Decisions_ALL[0] + " ! (03) soil-category dateset\n")
+    fin.write("vegeParTbl                      " + Decisions_ALL[1] + " ! (04) vegetation category dataset\n")
+    fin.write("soilStress                      " + Decisions_ALL[2] + " ! (05) choice of function for the soil moisture control on stomatal resistance\n")
+    fin.write("stomResist                      " + Decisions_ALL[3] + " ! (06) choice of function for stomatal resistance\n")
     fin.write("! ***********************************************************************************************************************\n")
-    fin.write("num_method                      " + Decisions_ALL[4]  + " ! (07) choice of numerical method\n")
-    fin.write("fDerivMeth                      " + Decisions_ALL[5]  + " ! (08) method used to calculate flux derivatives\n")
-    fin.write("LAI_method                      " + Decisions_ALL[6]  + " ! (09) method used to determine LAI and SAI\n")
-    fin.write("f_Richards                      " + Decisions_ALL[7]  + " ! (10) form of Richard's equation\n")
-    fin.write("groundwatr                      " + Decisions_ALL[8]  + " ! (11) choice of groundwater parameterization\n")
-    fin.write("hc_profile                      " + Decisions_ALL[9]  + " ! (12) choice of hydraulic conductivity profile\n")
-    fin.write("bcUpprTdyn                      " + Decisions_ALL[10]  + " ! (13) type of upper boundary condition for thermodynamics\n")
-    fin.write("bcLowrTdyn                      " + Decisions_ALL[11]  + " ! (14) type of lower boundary condition for thermodynamics\n")
-    fin.write("bcUpprSoiH                      " + Decisions_ALL[12]  + " ! (15) type of upper boundary condition for soil hydrology\n")
-    fin.write("bcLowrSoiH                      " + Decisions_ALL[13]  + " ! (16) type of lower boundary condition for soil hydrology\n")
-    fin.write("veg_traits                      " + Decisions_ALL[14]  + " ! (17) choice of parameterization for vegetation roughness length and displacement height\n")
-    fin.write("canopyEmis                      " + Decisions_ALL[15]  + " ! (18) choice of parameterization for canopy emissivity\n")
-    fin.write("snowIncept                      " + Decisions_ALL[16]  + " ! (19) choice of parameterization for snow interception\n")
-    fin.write("windPrfile                      " + Decisions_ALL[17]  + " ! (20) choice of wind profile through the canopy\n")
-    fin.write("astability                      " + Decisions_ALL[18]  + " ! (21) choice of stability function\n")
-    fin.write("canopySrad                      " + Decisions_ALL[19]  + " ! (22) choice of canopy shortwave radiation method\n")
-    fin.write("alb_method                      " + Decisions_ALL[20]  + " ! (23) choice of albedo representation\n")
-    fin.write("compaction                      " + Decisions_ALL[21]  + " ! (24) choice of compaction routine\n")
-    fin.write("snowLayers                      " + Decisions_ALL[22]  + " ! (25) choice of method to combine and sub-divide snow layers\n")
-    fin.write("thCondSnow                      " + Decisions_ALL[23]  + " ! (26) choice of thermal conductivity representation\n")
-    fin.write("thCondSoil                      " + Decisions_ALL[24]  + " ! (27) choice of method for the spatial representation of groundwater\n")
-    fin.write("spatial_gw                      " + Decisions_ALL[25]  + " ! (28) choice of method for the spatial representation of groundwater\n")
-    fin.write("subRouting                      " + Decisions_ALL[26]  + " ! (29) choice of method for sub-grid routing\n")
-    fin.write("snowDenNew                      " + Decisions_ALL[27]  + " ! (30) choice of method for new snow density\n")
+    fin.write("num_method                      " + Decisions_ALL[4] + " ! (07) choice of numerical method\n")
+    fin.write("fDerivMeth                      " + Decisions_ALL[5] + " ! (08) method used to calculate flux derivatives\n")
+    fin.write("LAI_method                      " + Decisions_ALL[6] + " ! (09) method used to determine LAI and SAI\n")
+    fin.write("f_Richards                      " + Decisions_ALL[7] + " ! (10) form of Richard's equation\n")
+    fin.write("groundwatr                      " + Decisions_ALL[8] + " ! (11) choice of groundwater parameterization\n")
+    fin.write("hc_profile                      " + Decisions_ALL[9] + " ! (12) choice of hydraulic conductivity profile\n")
+    fin.write("bcUpprTdyn                      " + Decisions_ALL[10] + " ! (13) type of upper boundary condition for thermodynamics\n")
+    fin.write("bcLowrTdyn                      " + Decisions_ALL[11] + " ! (14) type of lower boundary condition for thermodynamics\n")
+    fin.write("bcUpprSoiH                      " + Decisions_ALL[12] + " ! (15) type of upper boundary condition for soil hydrology\n")
+    fin.write("bcLowrSoiH                      " + Decisions_ALL[13] + " ! (16) type of lower boundary condition for soil hydrology\n")
+    fin.write("veg_traits                      " + Decisions_ALL[14] + " ! (17) choice of parameterization for vegetation roughness length and displacement height\n")
+    fin.write("canopyEmis                      " + Decisions_ALL[15] + " ! (18) choice of parameterization for canopy emissivity\n")
+    fin.write("snowIncept                      " + Decisions_ALL[16] + " ! (19) choice of parameterization for snow interception\n")
+    fin.write("windPrfile                      " + Decisions_ALL[17] + " ! (20) choice of wind profile through the canopy\n")
+    fin.write("astability                      " + Decisions_ALL[18] + " ! (21) choice of stability function\n")
+    fin.write("canopySrad                      " + Decisions_ALL[19] + " ! (22) choice of canopy shortwave radiation method\n")
+    fin.write("alb_method                      " + Decisions_ALL[20] + " ! (23) choice of albedo representation\n")
+    fin.write("compaction                      " + Decisions_ALL[21] + " ! (24) choice of compaction routine\n")
+    fin.write("snowLayers                      " + Decisions_ALL[22] + " ! (25) choice of method to combine and sub-divide snow layers\n")
+    fin.write("thCondSnow                      " + Decisions_ALL[23] + " ! (26) choice of thermal conductivity representation\n")
+    fin.write("thCondSoil                      " + Decisions_ALL[24] + " ! (27) choice of method for the spatial representation of groundwater\n")
+    fin.write("spatial_gw                      " + Decisions_ALL[25] + " ! (28) choice of method for the spatial representation of groundwater\n")
+    fin.write("subRouting                      " + Decisions_ALL[26] + " ! (29) choice of method for sub-grid routing\n")
+    fin.write("snowDenNew                      " + Decisions_ALL[27] + " ! (30) choice of method for new snow density\n")
 
     print "Finished creating new Decision file"
 
     return
 
-# Get values for given parameter from Local
-def GetParamVals(param_2_vary,NPruns,settings_dir,c_Site_ID):
 
+def GetParamVals(param_2_vary, NPruns, settings_dir, c_Site_ID):
+    ####################################################
+    # Get values for given parameter from Local
     # filename
     param_limits_file = settings_dir + c_Site_ID + "/summa_zLocalParamInfo.txt"
-    
+
     # Get Param limits from summa_zParamInfo.txt in ~/settings/
-    param_ex = "(.*)" + param_2_vary + "(.*)" # imporve serachability
-    fparam = open(param_limits_file,"r") # Open summa_zLocalParamInfo to search
-    paramfound = 0 # Logical for finding param
-    for line in fparam: # For each line
-        if re.match(param_ex,line):
+    param_ex = "(.*)" + param_2_vary + "(.*)"  # imporve serachability
+    fparam = open(param_limits_file, "r")  # Open summa_zLocalParamInfo to search
+    paramfound = 0  # Logical for finding param
+    for line in fparam:
+        if re.match(param_ex, line):
             paramfound = 1
             temp1 = line.split()
-            val_l = temp1[4] # (Lower value)
-            val_u = temp1[6] # (Upper value)
-            val_d = temp1[2] # (Default value)
-            if "d" in val_l: # replace d with e (fortran to python exponent syntax)
-                val_l = float(val_l.replace('d','e'))
+            val_l = temp1[4]  # (Lower value)
+            val_u = temp1[6]  # (Upper value)
+            val_d = temp1[2]  # (Default value)
+            if "d" in val_l:  # replace d with e (fortran to python exponent syntax)
+                val_l = float(val_l.replace('d', 'e'))
             else:
                 val_l = float(val_l)
-            if "d" in val_u: # replace d with e (fortran to python exponent syntax)
-                val_u = float(val_u.replace('d','e'))
+            if "d" in val_u:  # replace d with e (fortran to python exponent syntax)
+                val_u = float(val_u.replace('d', 'e'))
             else:
                 val_u = float(val_u)
-                
+
     if (paramfound == 0):
         sys.exit("Check spelling of Parameter to vary")
-        
-    fparam.close() # Close file
 
-    ## Cases for number of param values to return
-    Pvals = [] # Initialize param val list
+    fparam.close()  # Close file
+
+    # Cases for number of param values to return
+    Pvals = []  # Initialize param val list
 
     # NPruns == 1 --> return default
     if NPruns == 1:
@@ -312,23 +309,24 @@ def GetParamVals(param_2_vary,NPruns,settings_dir,c_Site_ID):
     # NPruns == 2 --> return upper and lower
     elif NPruns == 2:
         print 'Returning lower and upper parameter values'
-        Pvals = [val_l,val_u]
+        Pvals = [val_l, val_u]
     # NPruns > 1 --> split up
     else:
         print 'Returning parameter values between lower and upper bounds'
-        Pvals = numpy.linspace(val_l,val_u,NPruns,True)
+        Pvals = numpy.linspace(val_l, val_u, NPruns, True)
 
     print Pvals
     return (Pvals)
 
-# Create new Param Trial file
-def ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char):
 
+def ParamTrial(new_param_all, new_param_val, settings_dir, c_Site_ID, cRID_char):
+    ####################################################
+    # Create new Param Trial file
     # Define new Paramter file
-    new_file          = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
-    
+    new_file = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
+
     # Open file for writing
-    fin = open(new_file,"w")
+    fin = open(new_file, "w")
 
     # Print header info
     fin.write("! ***********************************************************************************************************************\n"
@@ -341,16 +339,15 @@ def ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char):
               "! Variable names are important: They must match the variables in the code, and they must occur before the data.\n"
               "!  NOTE: must include information for all HRUs\n"
               "! ***********************************************************************************************************************\n")
-    #help(new_param_val)
-    
+
     # Print c_new_param
     paramtext = "    ".join(new_param_all)
-    valtext   = "    ".join(map(str,new_param_val))
+    valtext = "    ".join(map(str, new_param_val))
     print valtext
-    
-    fin.write("hruIndex %s\n" %paramtext)
-    fin.write("1001     %s\n" %valtext) # NOTE: HRU 1001 HARDCODED (need to make dynamic for multiple HRUs)
-    
+
+    fin.write("hruIndex %s\n" % paramtext)
+    fin.write("1001     %s\n" % valtext)  # NOTE: HRU 1001 HARDCODED (need to make dynamic for multiple HRUs)
+
     # Close file
     fin.close()
 
@@ -358,14 +355,15 @@ def ParamTrial(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char):
 
     return
 
-# Create new Param Trial file (With multiple HRUs)
-def ParamTrial_Multi_hru(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID_char):
 
+def ParamTrial_Multi_hru(new_param_all, new_param_val, settings_dir, c_Site_ID, cRID_char):
+    ####################################################
+    # Create new Param Trial file (With multiple HRUs)
     # Define new Paramter file
-    new_file          = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
+    new_file = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
 
     # Open file for writing
-    fin = open(new_file,"w")
+    fin = open(new_file, "w")
 
     # Print header info
     fin.write("! ***********************************************************************************************************************\n"
@@ -381,79 +379,77 @@ def ParamTrial_Multi_hru(new_param_all,new_param_val,settings_dir,c_Site_ID,cRID
 
     # Print c_new_param
     paramtext = "    ".join(new_param_all)
-    
-    fin.write("hruIndex %s\n" %paramtext)
-    
-    for chru in range(0,len(new_param_val)):
-        c_values = "    ".join(map(str,new_param_val[chru]))
+
+    fin.write("hruIndex %s\n" % paramtext)
+
+    for chru in range(0, len(new_param_val)):
+        c_values = "    ".join(map(str, new_param_val[chru]))
         c_hru = 1001 + chru
-        fin.write("%d     %s\n" %(c_hru, c_values) )
-    
+        fin.write("%d     %s\n" % (c_hru, c_values))
+
     # Close file
     fin.close()
 
     return
 
 
-# Create Forcing file
-def Forcing_file(c_Site_ID,Flist_file,forcing_file,base_hru_num,NHRUs):
-	# Open file for writing
-	fin = open(Flist_file,"w")
+def Forcing_file(c_Site_ID, Flist_file, forcing_file, base_hru_num, NHRUs):
+    ####################################################
+    # Create Forcing file
+    # Open file for writing
+    fin = open(Flist_file, "w")
 
-	
-	fin.write("! ****************************************************************************************************\n"
-		"! List of forcing data files used in each HRU\n"
-		"!\n"
-		"! This file includes two 'words' per line:\n"
-		"!  (1) The HRU index (must match the indices in the local attributes file)\n"
-		"!  (2) The name of the descriptor file assigned to each HRU index\n"
-		"!        --> filename must be in single quotes\n"
-		"! ****************************************************************************************************\n")
-	for chru in range(0,NHRUs):
-		fin.write("   " + str(base_hru_num+chru) + "    " + "'" + str(c_Site_ID) + "/" +  str(forcing_file) + "'\n")
-	
-	fin.close()
+    fin.write("! ****************************************************************************************************\n"
+              "! List of forcing data files used in each HRU\n"
+              "!\n"
+              "! This file includes two 'words' per line:\n"
+              "!  (1) The HRU index (must match the indices in the local attributes file)\n"
+              "!  (2) The name of the descriptor file assigned to each HRU index\n"
+              "!        --> filename must be in single quotes\n"
+              "! ****************************************************************************************************\n")
+    for chru in range(0, NHRUs):
+        fin.write("   " + str(base_hru_num + chru) + "    " + "'" + str(c_Site_ID) + "/" + str(forcing_file) + "'\n")
 
-	return
+    fin.close()
 
-# Create Local Attributes file
-def Local_Attributes_file(Alist_file,base_hru_num,NHRUs):
-        # Open file for writing
-        fin = open(Alist_file,"w")
+    return
 
-	fin.write("hruIndex    HRUarea  latitude  longitude  elevation  tan_slope  contourLength  mHeight  vegTypeIndex  soilTypeIndex  slopeTypeIndex  downHRUindex\n")
-	
-	for chru in range(0,NHRUs):
-                fin.write(str(base_hru_num+chru) + "     1.0     47.4249    -121.4138    921.0          0              1     7.15             7             2               1             0\n")
 
+def Local_Attributes_file(Alist_file, base_hru_num, NHRUs):
+    ####################################################
+    # Create Local Attributes file
+    # Open file for writing
+    fin = open(Alist_file, "w")
+
+    fin.write("hruIndex    HRUarea  latitude  longitude  elevation  tan_slope  contourLength  mHeight  vegTypeIndex  soilTypeIndex  slopeTypeIndex  downHRUindex\n")
+
+    for chru in range(0, NHRUs):
+        fin.write(str(base_hru_num + chru) +
+                  "     1.0     47.4249    -121.4138    921.0          \
+                  0              1     7.15             7             2               1             0\n")
         fin.close()
-
         return
 
 
-
-
-          
-# Create pbs.cmd file for qsub summission
-def pbs(pbs_file,exp_name,c_fileManager,run_output,run_dir,cRID_char,your_email):
-
+def pbs(pbs_file, exp_name, c_fileManager, run_output, run_dir, cRID_char, your_email):
+    ####################################################
+    # Create pbs.cmd file for qsub summission
     # Open file for writing
-    fin = open(pbs_file,"w")
+    fin = open(pbs_file, "w")
 
-    # Write to file
+    # Write file
     fin.write("#!/bin/bash\n"
               "\n"
-              "#PBS -N " + cRID_char + "_" + exp_name  + "\n"
+              "#PBS -N " + cRID_char + "_" + exp_name + "\n"
               "##PBS -m e -M " + your_email + "\n"
               "##PBS -l nodes=hydro-c1-node7+hydro-c1-node6+hydro-c1-node4:ppn=1\n"
- 	      "#PBS -l nodes=1:ppn=1\n"
+              "#PBS -l nodes=1:ppn=1\n"
               "#PBS -l walltime=01:00:00\n"
-	      "#PBS -l pmem=10GB\n"
-	      "#PBS -o /home/wayandn/qsub_output/o." + cRID_char + "\n" 
-	      "#PBS -e /home/wayandn/qsub_output/e." + cRID_char + "\n"
-	      "##PBS -j oe\n"
-	      "export LD_LIBRARY_PATH=/opt/netcdf-4.3.0+ifort-12.1/lib\n"		
-	       #"#PBS -e errors/" + cRID_char + ".$PBS_O_JOBID.txt\n"
+              "#PBS -l pmem=10GB\n"
+              "#PBS -o /home/wayandn/qsub_output/o." + cRID_char + "\n"
+              "#PBS -e /home/wayandn/qsub_output/e." + cRID_char + "\n"
+              "##PBS -j oe\n"
+              "export LD_LIBRARY_PATH=/opt/netcdf-4.3.0+ifort-12.1/lib\n"
               "\n"
               "cd " + run_dir + "/\n")
     fin.write("./summa.exe ")
@@ -465,5 +461,3 @@ def pbs(pbs_file,exp_name,c_fileManager,run_output,run_dir,cRID_char,your_email)
     print "New pbs file made"
 
     return
-
-
