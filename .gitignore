@@ -9,4 +9,4 @@
 # Package generated files
 .ipynb_checkpoints/
 dist/
-turbpy.egg-info/
+*.egg-info/
