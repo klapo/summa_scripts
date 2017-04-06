@@ -275,7 +275,7 @@ def GetParamVals(param_2_vary, NPruns, settings_dir, c_Site_ID):
     param_limits_file = settings_dir + c_Site_ID + "/summa_zLocalParamInfo.txt"
 
     # Get Param limits from summa_zParamInfo.txt in ~/settings/
-    param_ex = "(.*)" + param_2_vary + "(.*)"  # imporve serachability
+    param_ex = "(.*)" + param_2_vary + "(.*)"  # improve serachability
     fparam = open(param_limits_file, "r")  # Open summa_zLocalParamInfo to search
     paramfound = 0  # Logical for finding param
     for line in fparam:
