@@ -17,7 +17,12 @@ This script holds functions to make new settings files:
 def file_Manager(settings_dir, input_dir, output_dir, c_Site_ID, cRID_char):
     ####################################################
     # Create new file Manager
-    # directories
+    # INPUT:
+    #   settings_dir = string, path to settings directory
+    #   input_dir = string, path to input directory
+    #   c_SITE_ID = string, name of the site (e.g., SNQ for Snoqualmie)
+    #   cRID_char = string, run number/run description (for multiple experiments)
+    #
     # c_Site_ID/cRID_char (i.e. SNQ/R_1)
     SITE_RUN = c_Site_ID + "/indiv_runs/" + cRID_char
 
@@ -66,7 +71,7 @@ def file_Manager(settings_dir, input_dir, output_dir, c_Site_ID, cRID_char):
     # Close file
     fin.close()
 
-    print "Finished creating new file Manager"
+    print("Finished creating new file Manager")
 
     return
 
@@ -131,7 +136,7 @@ def file_Manager_Multi_HRUs(settings_dir, input_dir, output_dir, c_Site_ID, cRID
     # Close file
     fin.close()
 
-    print "Finished creating new file Manager"
+    print("Finished creating new file Manager")
 
     return
 
@@ -182,7 +187,7 @@ def file_manager_restart(settings_dir,
     elif Var_out_lev == 2:
         fin.write("'meta/summa_zLocalModelVarMeta.txt.light'                  ! META_LOCALMVAR   = metadata for local model variables\n")
     else:
-        print "Var_out_lev must be option 1 or 2"
+        print("Var_out_lev must be option 1 or 2")
         return
 
     # Cont. printing
@@ -204,15 +209,60 @@ def file_manager_restart(settings_dir,
     # Close file
     fin.close()
 
-    print "Finished creating new file Manager"
+    print("Finished creating new file Manager")
 
     return
 
 
-def Desicions(Decisions_ALL, settings_dir, c_Site_ID, cRID_char, datestart, dateend):
+def Desicions(allDecisions, settings_dir, c_Site_ID, cRID_char, datestart, dateend):
     ####################################################
     # Create new Decision file
-    # directories
+    # INPUT:
+    #   allDecisions = dictionary, keys are parameterizations and items are
+    #                  the parameter option. Keys that are not specified are
+    #                  given a default value.
+    # settings_dir = string, path to settings directory
+
+    # Dictionary of default decisions
+    allDecisionsDefault = {}
+    allDecisionsDefault['soilCatTbl'] = 'ROSETTA'  # (03) soil-category dateset
+    allDecisionsDefault['vegeParTbl'] = 'USGS'  # (04) vegetation category dataset
+    allDecisionsDefault['soilStress'] = 'NoahType'  # (05) choice of funct. for soil moisture control on stomatal resistance
+    allDecisionsDefault['stomResist'] = 'BallBerry'  # (06) choice of function for stomatal resistance
+    allDecisionsDefault['num_method'] = 'itertive'  # (07) choice of numerical method
+    allDecisionsDefault['fDerivMeth'] = 'analytic'  # (08) method used to calculate flux derivatives
+    allDecisionsDefault['LAI_method'] = 'specified'  # (09) method used to determine LAI and SAI
+    allDecisionsDefault['f_Richards'] = 'mixdform'  # (10) form of Richard's equation
+    allDecisionsDefault['groundwatr'] = 'noXplict'  # (11) choice of groundwater parameterization
+    allDecisionsDefault['hc_profile'] = 'pow_prof'  # (12) choice of hydraulic conductivity profile
+    allDecisionsDefault['bcUpprTdyn'] = 'nrg_flux'  # (13) type of upper boundary condition for thermodynamics
+    allDecisionsDefault['bcLowrTdyn'] = 'zeroFlux'  # (14) type of lower boundary condition for thermodynamics
+    allDecisionsDefault['bcUpprSoiH'] = 'liq_flux'  # (15) type of upper boundary condition for soil hydrology
+    allDecisionsDefault['bcLowrSoiH'] = 'drainage'  # (16) type of lower boundary condition for soil hydrology
+    allDecisionsDefault['veg_traits'] = 'CM_QJRMS1998'  # (17) choice of param. for veg roughness & displacement height
+    allDecisionsDefault['canopyEmis'] = 'simplExp'  # (18) choice of parameterization for canopy emissivity
+    allDecisionsDefault['snowIncept'] = 'lightSnow'  # (19) choice of parameterization for snow interception
+    allDecisionsDefault['windPrfile'] = 'logBelowCanopy'  # (20) choice of wind profile through the canopy
+    allDecisionsDefault['astability'] = 'standard'  # (21) choice of stability function
+    allDecisionsDefault['canopySrad'] = 'CLM_2stream'  # (22) choice of canopy shortwave radiation method
+    allDecisionsDefault['alb_method'] = 'varDecay'  # (23) choice of albedo representation
+    allDecisionsDefault['compaction'] = 'anderson'  # (24) choice of compaction routine
+    allDecisionsDefault['snowLayers'] = 'jrdn1991'  # (25) choice of method to combine and sub-divide snow layers
+    allDecisionsDefault['thCondSnow'] = 'jrdn1991'  # (26) choice of thermal conductivity representation for snow
+    allDecisionsDefault['thCondSoil'] = 'mixConstit'  # (27) choice of thermal conductivity representation for soil
+    allDecisionsDefault['spatial_gw'] = 'localColumn'  # (28) choice of method for the spatial representation of groundwater
+    allDecisionsDefault['subRouting'] = 'timeDlay'  # (29) choice of method for sub-grid routing
+    allDecisionsDefault['snowDenNew'] = 'pahaut_76'  # (30) choice of method for new snow density
+
+    # Check for user-supplied decisions
+    allDecisions = {}
+    for dec in allDecisionsDefault:
+        try:
+            myDecisions[dec]
+            allDecisions[dec] = myDecisions[dec]
+        except KeyError:
+            allDecisions[dec] = allDecisionsDefault[dec]
+
     # filename
     new_file = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zDecisions_" + c_Site_ID + ".txt"
 
@@ -232,38 +282,38 @@ def Desicions(Decisions_ALL, settings_dir, c_Site_ID, cRID_char, datestart, date
     fin.write("simulStart              '" + datestart + "'  ! (01) simulation start time -- must be in single quotes\n"
               "simulFinsh              '" + dateend + "'  ! (02) simulation end time -- must be in single quotes\n"
               "! ***********************************************************************************************************************\n")
-    # Print Desicians (Decisions_ALL indexed by zero)
-    fin.write("soilCatTbl                      " + Decisions_ALL[0] + " ! (03) soil-category dateset\n")
-    fin.write("vegeParTbl                      " + Decisions_ALL[1] + " ! (04) vegetation category dataset\n")
-    fin.write("soilStress                      " + Decisions_ALL[2] + " ! (05) choice of function for the soil moisture control on stomatal resistance\n")
-    fin.write("stomResist                      " + Decisions_ALL[3] + " ! (06) choice of function for stomatal resistance\n")
+    # Print Desicians (allDecisions indexed by zero)
+    fin.write("soilCatTbl                      " + allDecisions['soilCatTbl'] + " ! (03) soil-category dateset\n")
+    fin.write("vegeParTbl                      " + allDecisions['vegeParTbl'] + " ! (04) vegetation category dataset\n")
+    fin.write("soilStress                      " + allDecisions['soilStress'] + " ! (05) choice of function for the soil moisture control on stomatal resistance\n")
+    fin.write("stomResist                      " + allDecisions['stomResist'] + " ! (06) choice of function for stomatal resistance\n")
     fin.write("! ***********************************************************************************************************************\n")
-    fin.write("num_method                      " + Decisions_ALL[4] + " ! (07) choice of numerical method\n")
-    fin.write("fDerivMeth                      " + Decisions_ALL[5] + " ! (08) method used to calculate flux derivatives\n")
-    fin.write("LAI_method                      " + Decisions_ALL[6] + " ! (09) method used to determine LAI and SAI\n")
-    fin.write("f_Richards                      " + Decisions_ALL[7] + " ! (10) form of Richard's equation\n")
-    fin.write("groundwatr                      " + Decisions_ALL[8] + " ! (11) choice of groundwater parameterization\n")
-    fin.write("hc_profile                      " + Decisions_ALL[9] + " ! (12) choice of hydraulic conductivity profile\n")
-    fin.write("bcUpprTdyn                      " + Decisions_ALL[10] + " ! (13) type of upper boundary condition for thermodynamics\n")
-    fin.write("bcLowrTdyn                      " + Decisions_ALL[11] + " ! (14) type of lower boundary condition for thermodynamics\n")
-    fin.write("bcUpprSoiH                      " + Decisions_ALL[12] + " ! (15) type of upper boundary condition for soil hydrology\n")
-    fin.write("bcLowrSoiH                      " + Decisions_ALL[13] + " ! (16) type of lower boundary condition for soil hydrology\n")
-    fin.write("veg_traits                      " + Decisions_ALL[14] + " ! (17) choice of parameterization for vegetation roughness length and displacement height\n")
-    fin.write("canopyEmis                      " + Decisions_ALL[15] + " ! (18) choice of parameterization for canopy emissivity\n")
-    fin.write("snowIncept                      " + Decisions_ALL[16] + " ! (19) choice of parameterization for snow interception\n")
-    fin.write("windPrfile                      " + Decisions_ALL[17] + " ! (20) choice of wind profile through the canopy\n")
-    fin.write("astability                      " + Decisions_ALL[18] + " ! (21) choice of stability function\n")
-    fin.write("canopySrad                      " + Decisions_ALL[19] + " ! (22) choice of canopy shortwave radiation method\n")
-    fin.write("alb_method                      " + Decisions_ALL[20] + " ! (23) choice of albedo representation\n")
-    fin.write("compaction                      " + Decisions_ALL[21] + " ! (24) choice of compaction routine\n")
-    fin.write("snowLayers                      " + Decisions_ALL[22] + " ! (25) choice of method to combine and sub-divide snow layers\n")
-    fin.write("thCondSnow                      " + Decisions_ALL[23] + " ! (26) choice of thermal conductivity representation\n")
-    fin.write("thCondSoil                      " + Decisions_ALL[24] + " ! (27) choice of method for the spatial representation of groundwater\n")
-    fin.write("spatial_gw                      " + Decisions_ALL[25] + " ! (28) choice of method for the spatial representation of groundwater\n")
-    fin.write("subRouting                      " + Decisions_ALL[26] + " ! (29) choice of method for sub-grid routing\n")
-    fin.write("snowDenNew                      " + Decisions_ALL[27] + " ! (30) choice of method for new snow density\n")
+    fin.write("num_method                      " + allDecisions['num_method'] + " ! (07) choice of numerical method\n")
+    fin.write("fDerivMeth                      " + allDecisions['fDerivMeth'] + " ! (08) method used to calculate flux derivatives\n")
+    fin.write("LAI_method                      " + allDecisions['LAI_method'] + " ! (09) method used to determine LAI and SAI\n")
+    fin.write("f_Richards                      " + allDecisions['f_Richards'] + " ! (10) form of Richard's equation\n")
+    fin.write("groundwatr                      " + allDecisions['groundwatr'] + " ! (11) choice of groundwater parameterization\n")
+    fin.write("hc_profile                      " + allDecisions['hc_profile'] + " ! (12) choice of hydraulic conductivity profile\n")
+    fin.write("bcUpprTdyn                      " + allDecisions['bcUpprTdyn'] + " ! (13) type of upper boundary condition for thermodynamics\n")
+    fin.write("bcLowrTdyn                      " + allDecisions['bcLowrTdyn'] + " ! (14) type of lower boundary condition for thermodynamics\n")
+    fin.write("bcUpprSoiH                      " + allDecisions['bcUpprSoiH'] + " ! (15) type of upper boundary condition for soil hydrology\n")
+    fin.write("bcLowrSoiH                      " + allDecisions['bcLowrSoiH'] + " ! (16) type of lower boundary condition for soil hydrology\n")
+    fin.write("veg_traits                      " + allDecisions['veg_traits'] + " ! (17) choice of parameterization for vegetation roughness length and displacement height\n")
+    fin.write("canopyEmis                      " + allDecisions['canopyEmis'] + " ! (18) choice of parameterization for canopy emissivity\n")
+    fin.write("snowIncept                      " + allDecisions['snowIncept'] + " ! (19) choice of parameterization for snow interception\n")
+    fin.write("windPrfile                      " + allDecisions['windPrfile'] + " ! (20) choice of wind profile through the canopy\n")
+    fin.write("astability                      " + allDecisions['astability'] + " ! (21) choice of stability function\n")
+    fin.write("canopySrad                      " + allDecisions['canopySrad'] + " ! (22) choice of canopy shortwave radiation method\n")
+    fin.write("alb_method                      " + allDecisions['alb_method'] + " ! (23) choice of albedo representation\n")
+    fin.write("compaction                      " + allDecisions['compaction'] + " ! (24) choice of compaction routine\n")
+    fin.write("snowLayers                      " + allDecisions['snowLayers'] + " ! (25) choice of method to combine and sub-divide snow layers\n")
+    fin.write("thCondSnow                      " + allDecisions['thCondSnow'] + " ! (26) choice of thermal conductivity representation\n")
+    fin.write("thCondSoil                      " + allDecisions['thCondSoil'] + " ! (27) choice of method for the spatial representation of groundwater\n")
+    fin.write("spatial_gw                      " + allDecisions['spatial_gw'] + " ! (28) choice of method for the spatial representation of groundwater\n")
+    fin.write("subRouting                      " + allDecisions['subRouting'] + " ! (29) choice of method for sub-grid routing\n")
+    fin.write("snowDenNew                      " + allDecisions['snowDenNew'] + " ! (30) choice of method for new snow density\n")
 
-    print "Finished creating new Decision file"
+    print("Finished creating new Decision file")
 
     return
 
@@ -304,18 +354,18 @@ def GetParamVals(param_2_vary, NPruns, settings_dir, c_Site_ID):
 
     # NPruns == 1 --> return default
     if NPruns == 1:
-        print 'Returning default parameter values'
+        print('Returning default parameter values')
         Pvals = [val_d]
     # NPruns == 2 --> return upper and lower
     elif NPruns == 2:
-        print 'Returning lower and upper parameter values'
+        print('Returning lower and upper parameter values')
         Pvals = [val_l, val_u]
     # NPruns > 1 --> split up
     else:
-        print 'Returning parameter values between lower and upper bounds'
+        print('Returning parameter values between lower and upper bounds')
         Pvals = numpy.linspace(val_l, val_u, NPruns, True)
 
-    print Pvals
+    print(Pvals)
     return (Pvals)
 
 
@@ -343,7 +393,7 @@ def ParamTrial(new_param_all, new_param_val, settings_dir, c_Site_ID, cRID_char)
     # Print c_new_param
     paramtext = "    ".join(new_param_all)
     valtext = "    ".join(map(str, new_param_val))
-    print valtext
+    print(valtext)
 
     fin.write("hruIndex %s\n" % paramtext)
     fin.write("1001     %s\n" % valtext)  # NOTE: HRU 1001 HARDCODED (need to make dynamic for multiple HRUs)
@@ -351,7 +401,7 @@ def ParamTrial(new_param_all, new_param_val, settings_dir, c_Site_ID, cRID_char)
     # Close file
     fin.close()
 
-    print "Finished creating new summa_zParamTrial file"
+    print("Finished creating new summa_zParamTrial file")
 
     return
 
@@ -458,6 +508,6 @@ def pbs(pbs_file, exp_name, c_fileManager, run_output, run_dir, cRID_char, your_
     # Close file
     fin.close()
 
-    print "New pbs file made"
+    print("New pbs file made")
 
     return
