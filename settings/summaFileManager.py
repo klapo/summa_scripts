@@ -214,7 +214,7 @@ def file_manager_restart(settings_dir,
     return
 
 
-def Desicions(allDecisions, settings_dir, c_Site_ID, cRID_char, datestart, dateend):
+def Desicions(userDecisions, settings_dir, c_Site_ID, cRID_char, datestart, dateend):
     ####################################################
     # Create new Decision file
     # INPUT:
@@ -258,16 +258,25 @@ def Desicions(allDecisions, settings_dir, c_Site_ID, cRID_char, datestart, datee
     allDecisions = {}
     for dec in allDecisionsDefault:
         try:
-            myDecisions[dec]
-            allDecisions[dec] = myDecisions[dec]
+            allDecisions[dec] = userDecisions[dec]
         except KeyError:
             allDecisions[dec] = allDecisionsDefault[dec]
 
     # filename
-    new_file = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zDecisions_" + c_Site_ID + ".txt"
+    if settings_dir[-1] == '/':
+        fPath = settings_dir + c_Site_ID + '/indiv_runs/' + cRID_char + '/'
+        new_file = fPath + 'summa_zDecisions_' + c_Site_ID + '.txt'
+    else:
+        fPath = settings_dir + '/' + c_Site_ID + "/indiv_runs/" + cRID_char + '/'
+        new_file = fPath + 'summa_zDecisions_' + c_Site_ID + '.txt'
 
+    print(new_file)
     # Open file for reading
-    fin = open(new_file, "w")
+    try:
+        fin = open(new_file, "w")
+    except FileNotFoundError:
+        os.makedirs(fPath)
+        fin = open(new_file, "w")
 
     # Print header info
     fin.write("! ***********************************************************************************************************************\n"
