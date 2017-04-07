@@ -5,6 +5,7 @@ import warnings
 try:
 	from setuptools import setup
 	from setuptools.extension import Extension
+	from setuptools import setup, find_packages
 except:
 	from distutils.core import setup
 	from distutils.extension import Extension

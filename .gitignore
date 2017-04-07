@@ -10,3 +10,6 @@
 .ipynb_checkpoints/
 dist/
 *.egg-info/
+
+# Previous branch of summa_Scripts to ignore
+/settings_old/
