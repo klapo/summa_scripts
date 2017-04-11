@@ -15,4 +15,5 @@ setup(name='summa_scripts',
 	author_email="lapok@atmos.washington.edu",
 	description="Python scripts for managing summa model runs",
 	version='0.1',
-	packages=["settings"])
+	packages=["summapy"],
+	include_package_data=True)
