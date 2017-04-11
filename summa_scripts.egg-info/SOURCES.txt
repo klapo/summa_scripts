@@ -1,6 +1,0 @@
-setup.py
-settings/summaFileManager.py
-summa_scripts.egg-info/PKG-INFO
-summa_scripts.egg-info/SOURCES.txt
-summa_scripts.egg-info/dependency_links.txt
-summa_scripts.egg-info/top_level.txt
