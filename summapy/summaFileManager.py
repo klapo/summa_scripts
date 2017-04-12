@@ -2,11 +2,11 @@ import os
 import shutil
 import re
 import sys
-import numpy
-from summapy.summaPaths import checkFile, checkPath
+import numpy as np
+from summapy.summaPaths import checkFile, checkPath, buildFileName
 
 '''
-This script holds functions to make new settings files:
+This script holds functions to setup a summa run:
     summa_file_Manager_X.txt
     summa_zDecisions_X.txt
     summa_zParamTrial_X.txt
@@ -14,77 +14,82 @@ This script holds functions to make new settings files:
 '''
 
 
-def fileManager(settings_dir, input_dir, output_dir, c_Site_ID, cRID_char):
-    ####################################################
+def fileManager(dirModel, siteID, expName, expID=''):
     # Create new file Manager
     # INPUT:
-    #   settings_dir = string, path to settings directory
-    #   input_dir = string, path to input directory
-    #   c_SITE_ID = string, name of the site (e.g., SNQ for Snoqualmie)
-    #   cRID_char = string, run number/run description (for multiple experiments)
-    #
-    # c_Site_ID/cRID_char (i.e. SNQ/R_1)
-    SITE_RUN = c_Site_ID + "/indiv_runs/" + cRID_char
 
-    # filename
-    new_file = settings_dir + SITE_RUN + "/summa_fileManager_" + c_Site_ID + ".txt"
+    # -------------------------------------------------------------------------
+    # Check files
+    # Check for input, settings, and output directories
+    dirSettings = checkPath(dirModel + 'settings/', siteID, expName)
+    dirInput = checkPath(dirModel + 'input/', siteID, expName)
+    dirOutput = checkPath(dirModel + 'output/', siteID, expName)
 
-    # Open file for reading
-    fin = open(new_file, "w")
+    # Create decision file name
+    fDecisionsName = buildFileName('summa_zDecisions', expID)
 
+    # Open/create the file manager
+    fManager = checkFile(dirModel + 'settings/', siteID, expName, 'summa_fileManager', expID)
+
+    # -------------------------------------------------------------------------
+    # Write the file
     # Print header Info
-    fin.write("SUMMA_FILE_MANAGER_V1.0\n! Comment line:\n! *** paths (must be in single quotes)\n")
+    fManager.write("SUMMA_FILE_MANAGER_V1.0\n! Comment line:\n! *** paths (must be in single quotes)\n")
 
     # Print paths (ORDER IS IMPORTANT!!!)
-    fin.write("'" + settings_dir + "'          ! SETNGS_PATH\n")
-    fin.write("'" + input_dir + c_Site_ID + "/'         ! INPUT_PATH\n")
-    fin.write("'" + output_dir + SITE_RUN + "/'    ! OUTPUT_PATH\n")
+    fManager.write("'" + dirSettings + "'  ! SETTING_PATH\n")
+    fManager.write("'" + dirInput + "/'  ! INPUT_PATH\n")
+    fManager.write("'" + dirOutput + "/'  ! OUTPUT_PATH\n")
 
     # Print control file paths
-    fin.write("! *** control files (must be in single quotes)\n")
+    fManager.write("! *** control files (must be in single quotes)\n")
 
     # path that changes for each run
-    fin.write("'" + SITE_RUN + "/summa_zDecisions_" + c_Site_ID + ".txt'            ! M_DECISIONS     = definition of model decisions\n")
+    fManager.write("'" + dirSettings + fDecisionsName + '  ! M_DECISIONS = definition of model decisions\n')
 
     # paths that are the same for ALL runs
-    fin.write("'meta/summa_zTimeMeta.txt'                           ! META_TIME        = metadata for time\n"
-              "'meta/summa_zLocalAttributeMeta.txt'                 ! META_ATTR        = metadata for local attributes\n"
-              "'meta/summa_zCategoryMeta.txt'                       ! META_TYPE        = metadata for local classification of veg, soil, etc.\n"
-              "'meta/summa_zForceMeta.txt'                          ! META_FORCE       = metadata for model forcing variables\n"
-              "'meta/summa_zLocalParamMeta.txt'                     ! META_LOCALPARAM  = metadata for local model parameters\n"
-              "'meta/summa_zLocalModelVarMeta.txt'                  ! META_LOCALMVAR   = metadata for local model variables\n"
-              "'meta/summa_zLocalModelIndexMeta.txt'                ! META_INDEX       = metadata for model indices\n"
-              "'meta/summa_zBasinParamMeta.txt'                     ! META_BASINPARAM  = metadata for basin-average model parameters\n"
-              "'meta/summa_zBasinModelVarMeta.txt'                  ! META_BASINMVAR   = metadata for basin-average model variables\n")
+    # Fix these paths to point to the meta directory included with the package
+    fManager.write("'meta/summa_zTimeMeta.txt'              ! META_TIME = metadata for time\n"
+                   "'meta/summa_zLocalAttributeMeta.txt'    ! META_ATTR = metadata for local attributes\n"
+                   "'meta/summa_zCategoryMeta.txt'          ! META_TYPE = metadata for local classification of veg, soil, etc.\n"
+                   "'meta/summa_zForceMeta.txt'             ! META_FORCE = metadata for model forcing variables\n"
+                   "'meta/summa_zLocalParamMeta.txt'        ! META_LOCALPARAM  = metadata for local model parameters\n"
+                   "'meta/summa_zLocalModelVarMeta.txt'     ! META_LOCALMVAR  = metadata for local model variables\n"
+                   "'meta/summa_zLocalModelIndexMeta.txt'   ! META_INDEX = metadata for model indices\n"
+                   "'meta/summa_zBasinParamMeta.txt'        ! META_BASINPARAM = metadata for basin-average model parameters\n"
+                   "'meta/summa_zBasinModelVarMeta.txt'     ! META_BASINMVAR = metadata for basin-average model variables\n")
 
     # paths that change for each site
-    fin.write("'" + c_Site_ID + "/summa_zLocalAttributes.txt'              ! LOCAL_ATTRIBUTES = local attributes\n"
-              "'" + c_Site_ID + "/summa_zLocalParamInfo.txt'             ! LOCALPARAM_INFO  = default values and constraints for local model parameters\n"
-              "'" + c_Site_ID + "/summa_zBasinParamInfo.txt'             ! BASINPARAM_INFO  = default values and constraints for basin-average model parameters\n"
-              "'" + c_Site_ID + "/summa_zForcingFileList.txt'                ! FORCING_FILELIST = list of files used in each HRU\n"
-              "'" + c_Site_ID + "/summa_zInitialCond.txt'              ! MODEL_INITCOND  = model initial conditions\n")
+    fManager.write("'" + dirSettings + "/summa_zLocalAttributes.txt'    ! LOCAL_ATTRIBUTES = local attributes\n"
+                   "'" + dirSettings + "/summa_zLocalParamInfo.txt'     ! LOCALPARAM_INFO = default values and constraints for local model parameters\n"
+                   "'" + dirSettings + "/summa_zBasinParamInfo.txt'     ! BASINPARAM_INFO = default values and constraints for basin-average model parameters\n"
+                   "'" + dirSettings + "/summa_zForcingFileList.txt'    ! FORCING_FILELIST = list of files used in each HRU\n"
+                   "'" + dirSettings + "/summa_zInitialCond.txt'        ! MODEL_INITCOND = model initial conditions\n")
 
     # paths that change for each run
-    fin.write("'" + SITE_RUN + "/summa_zParamTrial_" + c_Site_ID + ".txt'           ! PARAMETER_TRIAL = trial values for model parameters\n")
-    fin.write("'" + c_Site_ID + "_" + cRID_char + "'                                        ! OUTPUT_PREFIX\n")
+    if expID == '':
+        expID = expName + '_' + siteID
+    fManager.write("'" + dirSettings + "/summa_zParamTrial.txt'  ! PARAMETER_TRIAL = trial values for model parameters\n")
+    fManager.write("'" + expID + "'  ! OUTPUT_PREFIX\n")
 
     # Close file
-    fin.close()
+    fManager.close()
 
     print("Finished creating new file Manager")
 
     return
 
 
-def decision(userDecisions, dirSettings, siteID, expName, datestart, dateend, expID=''):
+def decision(userDecisions, dirModel, siteID, expName, datestart, dateend, expID=''):
     ####################################################
     # Create new Decision file
     # INPUT:
-    #   allDecisions = dictionary, keys are parameterizations and items are
+    #   userDecisions = dictionary, keys are parameterizations and items are
     #                  the parameter option. Keys that are not specified are
     #                  given a default value.
-    # settings_dir = string, path to settings directory
+    #   dirModel = string, path to settings directory
 
+    # -------------------------------------------------------------------------
     # Dictionary of default decisions
     allDecisionsDefault = {}
     allDecisionsDefault['soilCatTbl'] = 'ROSETTA'  # (03) soil-category dateset
@@ -124,8 +129,10 @@ def decision(userDecisions, dirSettings, siteID, expName, datestart, dateend, ex
         except KeyError:
             allDecisions[dec] = allDecisionsDefault[dec]
 
-    # filename
-    fin = checkFile(dirSettings, siteID, expName, 'summa_zDecisions', expID)
+    # -------------------------------------------------------------------------
+    # Write the decision file
+    # Filename and directory paths
+    fin = checkFile(dirModel + 'settings/', siteID, expName, 'summa_zDecisions', expID)
 
     # Format datetime objects into desired strings
     dateStartString = datestart.strftime('%Y-%m-%D %H:%M')
@@ -180,25 +187,28 @@ def decision(userDecisions, dirSettings, siteID, expName, datestart, dateend, ex
     return
 
 
-def getParamVals(param_2_vary, NPruns, settings_dir, c_Site_ID):
+def getParamVals(param_2_vary, NPruns, dirModel, siteID, expName, expID=''):
     ####################################################
     # Get values for given parameter from Local
-    # filename
-    # Need to update to search for the _generic file included with the package
-    param_limits_file = settings_dir + c_Site_ID + "/summa_zLocalParamInfo.txt"
-    # find settings/summa_zLocalParamInfo_generic.txt included with the package
-    dirLocalParamInfo, _ = os.path.split(__file__)
-    pathPackageLocalParamInfo = os.path.join(dirLocalParamInfo, 'settings', 'summa_zLocalParamInfo_generic.txt')
+    # INPUT:
+    #
 
-    # Copy the file to the model directory
-    pathLocalParamInfo = settings.checkPath(dirSettings, siteID, expName)
-    paramInfo = pathLocalParamInfo + 'summa_zLocalParamInfo.txt'
+    # -------------------------------------------------------------------------
+    # Check for the file containing default parameter values
+    try:
+        fParam = checkFile(dirModel + 'settings/', siteID, expName,
+                           'summa_zLocalParamInfo', expID, mode='r')
+    except FileNotFoundError:
+        paramLocalParamInfo(dirModel, siteID, expName)
+        fParam = checkFile(dirModel + 'settings/', siteID, expName,
+                           'summa_zLocalParamInfo', expID, mode='r')
 
+    # -------------------------------------------------------------------------
     # Get Param limits from summa_zParamInfo.txt in ~/settings/
     param_ex = "(.*)" + param_2_vary + "(.*)"  # improve serachability
-    fparam = open(param_limits_file, "r")  # Open summa_zLocalParamInfo to search
+
     paramfound = 0  # Logical for finding param
-    for line in fparam:
+    for line in fParam:
         if re.match(param_ex, line):
             paramfound = 1
             temp1 = line.split()
@@ -217,7 +227,7 @@ def getParamVals(param_2_vary, NPruns, settings_dir, c_Site_ID):
     if (paramfound == 0):
         sys.exit("Check spelling of Parameter to vary")
 
-    fparam.close()  # Close file
+    fParam.close()  # Close file
 
     # Cases for number of param values to return
     Pvals = []  # Initialize param val list
@@ -239,7 +249,7 @@ def getParamVals(param_2_vary, NPruns, settings_dir, c_Site_ID):
     return (Pvals)
 
 
-def paramLocalParamInfo(dirSettings, siteID, expName):
+def paramLocalParamInfo(dirModel, siteID, expName):
     ####################################################
     # Create local param info. This file contains the default, min, and max
     # param values. Default values are only used if param values are not
@@ -252,43 +262,47 @@ def paramLocalParamInfo(dirSettings, siteID, expName):
     pathPackageLocalParamInfo = os.path.join(dirLocalParamInfo, 'settings', 'summa_zLocalParamInfo_generic.txt')
 
     # Copy the file to the model directory
-    pathLocalParamInfo = settings.checkPath(dirSettings, siteID, expName)
+    pathLocalParamInfo = checkPath(dirModel + 'settings/', siteID, expName)
     shutil.copy(pathPackageLocalParamInfo, pathLocalParamInfo + '/summa_zLocalParamInfo.txt')
 
     return
 
 
-def paramTrial(new_param_all, new_param_val, settings_dir, c_Site_ID, cRID_char):
+def paramTrial(strParam, valParam, dirModel, siteID, expName, expID=''):
     ####################################################
     # Create new Param Trial file
-    # Define new Paramter file
-    new_file = settings_dir + c_Site_ID + "/indiv_runs/" + cRID_char + "/summa_zParamTrial_" + c_Site_ID + ".txt"
 
-    # Open file for writing
-    fin = open(new_file, "w")
+    # -------------------------------------------------------------------------
+    # Define new Paramter file
+    if not dirModel[-1] == '/':
+        dirModel = dirModel + '/'
+    fParamTrial = checkFile(dirModel + 'settings/', siteID, expName,
+                            'summa_zParamTrial', expID)
 
     # Print header info
-    fin.write("! ***********************************************************************************************************************\n"
-              "! ***********************************************************************************************************************\n"
-              "! ***** DEFINITION OF TRIAL MODEL PARAMETER VALUES **********************************************************************\n"
-              "! ***********************************************************************************************************************\n"
-              "! ***********************************************************************************************************************\n"
-              "! Note: Lines starting with ""!"" are treated as comment lines -- there is no limit on the number of comment lines.\n"
-              "!\n"
-              "! Variable names are important: They must match the variables in the code, and they must occur before the data.\n"
-              "!  NOTE: must include information for all HRUs\n"
-              "! ***********************************************************************************************************************\n")
+    fParamTrial.write(
+        "! ***********************************************************************************************************************\n"
+        "! ***********************************************************************************************************************\n"
+        "! ***** DEFINITION OF TRIAL MODEL PARAMETER VALUES **********************************************************************\n"
+        "! ***********************************************************************************************************************\n"
+        "! ***********************************************************************************************************************\n"
+        "! Note: Lines starting with ""!"" are treated as comment lines -- there is no limit on the number of comment lines.\n"
+        "!\n"
+        "! Variable names are important: They must match the variables in the code, and they must occur before the data.\n"
+        "!  NOTE: must include information for all HRUs\n"
+        "! ***********************************************************************************************************************\n")
 
-    # Print c_new_param
-    paramtext = "    ".join(new_param_all)
-    valtext = "    ".join(map(str, new_param_val))
+    # write parameter identifier line and parameter value line
+    valParam = np.atleast_1d(valParam)  # force '0 dimensional arrays' (e.g.,1 value) to be 1 dimensional
+    paramtext = "    ".join(strParam)
+    valtext = "    ".join(map(str, valParam))
     print(valtext)
 
-    fin.write("hruIndex %s\n" % paramtext)
-    fin.write("1001     %s\n" % valtext)  # NOTE: HRU 1001 HARDCODED (need to make dynamic for multiple HRUs)
+    fParamTrial.write("hruIndex %s\n" % paramtext)
+    fParamTrial.write("1001     %s\n" % valtext)  # NOTE: HRU 1001 HARDCODED (need to make dynamic for multiple HRUs)
 
     # Close file
-    fin.close()
+    fParamTrial.close()
 
     print("Finished creating new summa_zParamTrial file")
 

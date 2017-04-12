@@ -1,14 +1,21 @@
 import os
 
 
-def checkFile(dirSettings, siteID, expName, fName, expID=''):
+def buildFileName(fName, expID, fType='.txt'):
+    if not expID == '':
+        expID = '_' + expID
+    fullFilename = fName + expID + fType
+    return fullFilename
+
+
+def checkFile(dirModel, siteID, expName, fName, expID='', fType='.txt', mode='w'):
     # Checks that path exists
     # Creates path to desired file, fName
     # Opens file
     # Returns object of the open file, fin
     #
     # INPUT:
-    #   dirSettings: string to model settings directory
+    #   dirModel: string to model directory
     #   siteID: string of the site name
     #   expName: string of the experiment name
     #   fName: string of the file name. Needs to end in an underscore
@@ -18,36 +25,22 @@ def checkFile(dirSettings, siteID, expName, fName, expID=''):
     # Files for a specific run/experiment should provide expID
     # Do not include underscores in strings, they are automatically included
 
-    # File name (check for underscore)
-    if not fName[-1] == '_':
-        fName += '_'
+    # File path and name
+    fPath = checkPath(dirModel, siteID, expName, expID)
+    fullFilename = buildFileName(fName, expID, fType)
+    newFile = fPath + '/' + fullFilename
 
-    if not expID == '':
-        expID = '_' + expID
-
-    # File path
-    if dirSettings[-1] == '/':
-        fPath = dirSettings + siteID + '_' + expName
-    else:
-        fPath = dirSettings + '/' + siteID + '_' + expName
-    newFile = fPath + '/' + fName + expName + expID + '.txt'
-
-    # Open file for reading
-    try:
-        fin = open(newFile, "w")
-    except FileNotFoundError:
-        os.makedirs(fPath)
-        fin = open(newFile, "w")
-
+    # Open/create and return object
+    fin = open(newFile, mode)
     return(fin)
 
 
-def checkPath(dirSettings, siteID, expName, expID=''):
+def checkPath(dirModel, siteID, expName, expID=''):
     # Checks that path exists
     # Creates desired path exists
     #
     # INPUT:
-    #   dirSettings: string to model settings directory
+    #   dirModel: string to model directory
     #   siteID: string of the site name
     #   expName: string of the experiment name
     #   fName: string of the file name. Needs to end in an underscore
@@ -61,10 +54,10 @@ def checkPath(dirSettings, siteID, expName, expID=''):
         expID = '_' + expID
 
     # File path
-    if dirSettings[-1] == '/':
-        fPath = dirSettings + siteID + '_' + expName + expID
+    if dirModel[-1] == '/':
+        fPath = dirModel + expName + '/' + siteID
     else:
-        fPath = dirSettings + '/' + siteID + '_' + expName + expID
+        fPath = dirModel + '/' + expName + '/' + siteID
 
     # Open file for reading
     if not os.path.exists(fPath):
