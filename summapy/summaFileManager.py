@@ -3,14 +3,11 @@ import shutil
 import re
 import sys
 import numpy as np
+import xarray as xr
 from summapy.summaPaths import checkFile, checkPath, buildFileName
 
 '''
-This script holds functions to setup a summa run:
-    summa_file_Manager_X.txt
-    summa_zDecisions_X.txt
-    summa_zParamTrial_X.txt
-    pbd.cmd
+This script holds functions to setup a summa run
 '''
 
 
@@ -27,6 +24,8 @@ def fileManager(dirModel, siteID, expName, expID=''):
 
     # Create decision file name
     fDecisionsName = buildFileName('summa_zDecisions', expID)
+    fForcingFileList = buildFileName('summa_zForcingFileList', expID)
+    fParamTrial = buildFileName('summa_zParamTrial', expID)
 
     # Open/create the file manager
     fManager = checkFile(dirModel + 'settings/', siteID, expName, 'summa_fileManager', expID)
@@ -34,7 +33,7 @@ def fileManager(dirModel, siteID, expName, expID=''):
     # -------------------------------------------------------------------------
     # Write the file
     # Print header Info
-    fManager.write("SUMMA_FILE_MANAGER_V1.0\n! Comment line:\n! *** paths (must be in single quotes)\n")
+    fManager.write("'SUMMA_FILE_MANAGER_V1.0'\n! Comment line:\n! *** paths (must be in single quotes)\n")
 
     # Print paths (ORDER IS IMPORTANT!!!)
     fManager.write("'" + dirSettings + "'  ! SETTING_PATH\n")
@@ -47,8 +46,7 @@ def fileManager(dirModel, siteID, expName, expID=''):
     # path that changes for each run
     fManager.write("'" + dirSettings + fDecisionsName + '  ! M_DECISIONS = definition of model decisions\n')
 
-    # paths that are the same for ALL runs
-    # Fix these paths to point to the meta directory included with the package
+    # meta paths
     fManager.write("'meta/summa_zTimeMeta.txt'              ! META_TIME = metadata for time\n"
                    "'meta/summa_zLocalAttributeMeta.txt'    ! META_ATTR = metadata for local attributes\n"
                    "'meta/summa_zCategoryMeta.txt'          ! META_TYPE = metadata for local classification of veg, soil, etc.\n"
@@ -63,13 +61,11 @@ def fileManager(dirModel, siteID, expName, expID=''):
     fManager.write("'" + dirSettings + "/summa_zLocalAttributes.txt'    ! LOCAL_ATTRIBUTES = local attributes\n"
                    "'" + dirSettings + "/summa_zLocalParamInfo.txt'     ! LOCALPARAM_INFO = default values and constraints for local model parameters\n"
                    "'" + dirSettings + "/summa_zBasinParamInfo.txt'     ! BASINPARAM_INFO = default values and constraints for basin-average model parameters\n"
-                   "'" + dirSettings + "/summa_zForcingFileList.txt'    ! FORCING_FILELIST = list of files used in each HRU\n"
+                   "'" + dirSettings + '/' + fForcingFileList + "'    ! FORCING_FILELIST = list of files used in each HRU\n"
                    "'" + dirSettings + "/summa_zInitialCond.txt'        ! MODEL_INITCOND = model initial conditions\n")
 
     # paths that change for each run
-    if expID == '':
-        expID = expName + '_' + siteID
-    fManager.write("'" + dirSettings + "/summa_zParamTrial.txt'  ! PARAMETER_TRIAL = trial values for model parameters\n")
+    fManager.write("'" + dirSettings + '/' + fParamTrial + "'  ! PARAMETER_TRIAL = trial values for model parameters\n")
     fManager.write("'" + expID + "'  ! OUTPUT_PREFIX\n")
 
     # Close file
@@ -135,8 +131,8 @@ def decision(userDecisions, dirModel, siteID, expName, datestart, dateend, expID
     fin = checkFile(dirModel + 'settings/', siteID, expName, 'summa_zDecisions', expID)
 
     # Format datetime objects into desired strings
-    dateStartString = datestart.strftime('%Y-%m-%D %H:%M')
-    dateEndString = dateend.strftime('%Y-%m-%D %H:%M')
+    dateStartString = datestart.strftime('%Y-%m-%d %H:%M')
+    dateEndString = dateend.strftime('%Y-%m-%d %H:%M')
 
     # Print header info
     fin.write("! ***********************************************************************************************************************\n"
@@ -249,25 +245,6 @@ def getParamVals(param_2_vary, NPruns, dirModel, siteID, expName, expID=''):
     return (Pvals)
 
 
-def paramLocalParamInfo(dirModel, siteID, expName):
-    ####################################################
-    # Create local param info. This file contains the default, min, and max
-    # param values. Default values are only used if param values are not
-    # specfieid in paramTrial.
-    # Copy-pastes the _generic version of the file by default. Non-default
-    # values can be supplied.
-
-    # find settings/summa_zLocalParamInfo_generic.txt included with the package
-    dirLocalParamInfo, _ = os.path.split(__file__)
-    pathPackageLocalParamInfo = os.path.join(dirLocalParamInfo, 'settings', 'summa_zLocalParamInfo_generic.txt')
-
-    # Copy the file to the model directory
-    pathLocalParamInfo = checkPath(dirModel + 'settings/', siteID, expName)
-    shutil.copy(pathPackageLocalParamInfo, pathLocalParamInfo + '/summa_zLocalParamInfo.txt')
-
-    return
-
-
 def paramTrial(strParam, valParam, dirModel, siteID, expName, expID=''):
     ####################################################
     # Create new Param Trial file
@@ -309,76 +286,152 @@ def paramTrial(strParam, valParam, dirModel, siteID, expName, expID=''):
     return
 
 
-def forcingFile(c_Site_ID, Flist_file, forcing_file, base_hru_num, NHRUs):
+def forcingFile(dirModel, siteID, expName, fForceFile,
+                rangeHRU, xrForce=None, expID=''):
     ####################################################
-    # Create Forcing file
+    # Create forcing file list and save netcdf of forcing data in
+    # input directory.
+    # CAUTION: This function does not actually support multiple HRUs at the moment
+
+    # -------------------------------------------------------------------------
+    # Write forcing file list
     # Open file for writing
-    fin = open(Flist_file, "w")
+    fName = 'summa_zForcingFileList'
+    if not dirModel[-1] == '/':
+        dirModel = dirModel + '/'
+    fForceList = checkFile(dirModel + 'settings/', siteID, expName, fName, expID)
 
-    fin.write("! ****************************************************************************************************\n"
-              "! List of forcing data files used in each HRU\n"
-              "!\n"
-              "! This file includes two 'words' per line:\n"
-              "!  (1) The HRU index (must match the indices in the local attributes file)\n"
-              "!  (2) The name of the descriptor file assigned to each HRU index\n"
-              "!        --> filename must be in single quotes\n"
-              "! ****************************************************************************************************\n")
-    for chru in range(0, NHRUs):
-        fin.write("   " + str(base_hru_num + chru) + "    " + "'" +
-                  str(c_Site_ID) + "/" + str(forcing_file) + "'\n")
+    fForceList.write(
+        "! ****************************************************************************************************\n"
+        "! List of forcing data files used in each HRU\n"
+        "!\n"
+        "! This file includes two 'words' per line:\n"
+        "!  (1) The HRU index (must match the indices in the local attributes file)\n"
+        "!  (2) The name of the descriptor file assigned to each HRU index\n"
+        "!        --> filename must be in single quotes\n"
+        "! ****************************************************************************************************\n")
 
-    fin.close()
+    if not np.size(fForceFile) == np.size(rangeHRU):
+        raise ValueError('fForceFile and rangeHRU do not contain the same \
+                         number of elements')
+    if np.size(fForceFile) == 1:
+        fForceList.write("   " + str(rangeHRU) + "    " + "'" + fForceFile + "'\n")
+
+    else:
+        for nHRU, fHRU in zip(rangeHRU, fForceFile):
+            fForceList.write("   " + str(nHRU) + "    " + "'" + fHRU + "'\n")
+
+    fForceList.close()
+
+    # -------------------------------------------------------------------------
+    # Save netcdf forcing files in input directory
+    if xrForce:
+        dirInput = checkPath(dirModel + 'input/', siteID, expName)
+
+        cwd = os.getcwd()
+        os.chdir(dirInput)
+
+        xrForce.to_netcdf(fForceFile)
+
+        # Make sure we leave the user where they were
+        os.chdir(cwd)
 
     return
 
 
-def Local_Attributes_file(Alist_file, base_hru_num, NHRUs):
+def localAttributesFile(xrAttribute, dirModel, siteID, expName):
     ####################################################
     # Create Local Attributes file
     # Open file for writing
     # Need to update to take input lat, lon, elev etc.
-    fin = open(Alist_file, "w")
+    # Can be just an netcdf file -- probably simpler?
+    # Need to open up example and figure out how to create my own netcdf that matches
 
-    fin.write("hruIndex    HRUarea  latitude  longitude  elevation  tan_slope  \
-               contourLength  mHeight  vegTypeIndex  soilTypeIndex  \
-               slopeTypeIndex  downHRUindex\n")
+    if not dirModel[-1] == '/':
+        dirModel = dirModel + '/'
+    fName = 'summa_zLocalAttributes'
+    dirAttribute = checkPath(dirModel + 'settings/', siteID, expName)
 
-    for chru in range(0, NHRUs):
-        fin.write(str(base_hru_num + chru) +
-                  "     1.0     47.4249    -121.4138    921.0          \
-                  0              1     7.15             7             \
-                  2               1             0\n")
-        fin.close()
-        return
+    cwd = os.getcwd()
+    os.chdir(dirAttribute)
+    xrAttribute.to_netcdf(fName + '.nc')
+
+    # Make sure we leave the user where they were
+    os.chdir(cwd)
+
+    return
+
+    # Keeping this code snippet for later in case I need it
+    # fAttribute.write("hruIndex    HRUarea  latitude  longitude  elevation  tan_slope  \
+    #            contourLength  mHeight  vegTypeIndex  soilTypeIndex  \
+    #            slopeTypeIndex  downHRUindex\n")
+    #
+    # fAttribute.write(str(nHRU) +
+    #           "     1.0     47.4249    -121.4138    921.0          \
+    #           0              1     7.15             7             \
+    #           2               1             0\n")
+    # fAttribute.close()
 
 
-def pbs(pbs_file, exp_name, c_fileManager, run_output, run_dir, cRID_char, your_email):
+def writeDefault(dirModel, siteID, expName):
     ####################################################
-    # Create pbs.cmd file for qsub summission
-    # Open file for writing
-    fin = open(pbs_file, "w")
+    # Copyies the _generic files and meta directory to run summa.
+    # Local param info:
+    # Contains the default, min, and max param values. Default values are only
+    # used if param values are not specfieid in paramTrial.
 
-    # Write file
-    fin.write("#!/bin/bash\n"
-              "\n"
-              "#PBS -N " + cRID_char + "_" + exp_name + "\n"
-              "##PBS -m e -M " + your_email + "\n"
-              "##PBS -l nodes=hydro-c1-node7+hydro-c1-node6+hydro-c1-node4:ppn=1\n"
-              "#PBS -l nodes=1:ppn=1\n"
-              "#PBS -l walltime=01:00:00\n"
-              "#PBS -l pmem=10GB\n"
-              "#PBS -o /home/wayandn/qsub_output/o." + cRID_char + "\n"
-              "#PBS -e /home/wayandn/qsub_output/e." + cRID_char + "\n"
-              "##PBS -j oe\n"
-              "export LD_LIBRARY_PATH=/opt/netcdf-4.3.0+ifort-12.1/lib\n"
-              "\n"
-              "cd " + run_dir + "/\n")
-    fin.write("./summa.exe ")
-    fin.write(exp_name + " " + c_fileManager + " > " + run_output + "\n")
+    # Package directory
+    dirPackageDefault, _ = os.path.split(__file__)
 
-    # Close file
-    fin.close()
+    # -------------------------------------------------------------------------
+    # Default params and initial conditions
 
-    print("New pbs file made")
+    # Local param info
+    pathPackageGeneric = os.path.join(dirPackageDefault, 'settings', 'summa_zLocalParamInfo_generic.txt')
+    pathLocal = checkPath(dirModel + 'settings/', siteID, expName)
+    shutil.copy(pathPackageGeneric, pathLocal + '/summa_zLocalParamInfo.txt')
+
+    # Local initial conditions
+    pathPackageGeneric = os.path.join(dirPackageDefault, 'settings', 'summa_zInitialCond_generic.nc')
+    pathLocal = checkPath(dirModel + 'settings/', siteID, expName)
+    shutil.copy(pathPackageGeneric, pathLocal + '/summa_zInitialCond.nc')
+
+    # Local basin info
+    pathPackageGeneric = os.path.join(dirPackageDefault, 'settings', 'summa_zBasinParamInfo_generic.txt')
+    pathLocal = checkPath(dirModel + 'settings/', siteID, expName)
+    shutil.copy(pathPackageGeneric, pathLocal + '/summa_zBasinParamInfo.txt')
+
+    # -------------------------------------------------------------------------
+    # meta files (why do these need to be included with summa?)
+
+    # File path
+    if dirModel[-1] == '/':
+        pathMeta = dirModel + 'meta'
+    else:
+        pathMeta = dirModel + '/' + 'meta'
+
+    # Open file for reading
+    if not os.path.exists(pathMeta):
+        os.makedirs(pathMeta)
+
+    # list of all summa/meta/*Meta files to copy
+    listMeta = ['summa_zBasinModelVarMeta.txt',
+                'summa_zBasinParamMeta.txt',
+                'summa_zCategoryMeta.txt',
+                'summa_zForceMeta.txt',
+                'summa_zLocalAttributeMeta.txt',
+                'summa_zLocalModelIndexMeta.txt',
+                'summa_zLocalModelVarMeta.txt',
+                'summa_zLocalParamMeta.txt',
+                'summa_zModelIndexMeta.txt',
+                'summa_zParamMeta.txt',
+                'summa_zTimeMeta.txt',
+                ]
+
+    for m in listMeta:
+        if os.path.isfile(pathMeta + '/' + m):
+            continue
+        else:
+            shutil.copy(pathPackageGeneric, pathMeta + '/' + m)
 
     return
