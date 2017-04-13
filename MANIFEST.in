@@ -1,1 +1,4 @@
 include summapy/settings/*_generic.txt
+include summapy/settings/*_generic.nc
+include summapy/meta/*Meta.txt
+include summapy/settings/*.TBL
