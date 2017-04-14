@@ -62,4 +62,5 @@ def checkPath(dirModel, siteID, expName, expID=''):
     # Open file for reading
     if not os.path.exists(fPath):
         os.makedirs(fPath)
+        os.chmod(fPath, mode=0o777)
     return(fPath)
