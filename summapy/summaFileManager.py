@@ -11,16 +11,21 @@ This script holds functions to setup a summa run
 '''
 
 
-def fileManager(dirModel, siteID, expName, expID=''):
+def fileManager(dirModel, dirRoot, siteID, expName, expID=''):
     # Create new file Manager
     # INPUT:
 
     # -------------------------------------------------------------------------
     # Check files
     # Check for input, settings, and output directories
+    if not dirRoot[-1] == '/':
+        dirRoot = dirRoot + '/'
     dirSettings = checkPath(dirModel + 'settings/', siteID, expName)
+    dirSettings = dirRoot + 'settings/' + expName + '/' + siteID
     dirInput = checkPath(dirModel + 'input/', siteID, expName)
+    dirInput = dirRoot + 'input/' + expName + '/' + siteID
     dirOutput = checkPath(dirModel + 'output/', siteID, expName)
+    dirOutput = dirRoot + 'output/' + expName + '/' + siteID
 
     # Create decision file name
     fDecisionsName = buildFileName('summa_zDecisions', expID)
@@ -36,7 +41,7 @@ def fileManager(dirModel, siteID, expName, expID=''):
     fManager.write("'SUMMA_FILE_MANAGER_V1.0'\n! Comment line:\n! *** paths (must be in single quotes)\n")
 
     # Print paths (ORDER IS IMPORTANT!!!)
-    fManager.write("'" + dirSettings + "'  ! SETTING_PATH\n")
+    fManager.write("'" + dirSettings + "/'  ! SETTING_PATH\n")
     fManager.write("'" + dirInput + "/'  ! INPUT_PATH\n")
     fManager.write("'" + dirOutput + "/'  ! OUTPUT_PATH\n")
 
@@ -44,7 +49,7 @@ def fileManager(dirModel, siteID, expName, expID=''):
     fManager.write("! *** control files (must be in single quotes)\n")
 
     # path that changes for each run
-    fManager.write("'" + dirSettings + fDecisionsName + '  ! M_DECISIONS = definition of model decisions\n')
+    fManager.write("'" + fDecisionsName + "'  ! M_DECISIONS = definition of model decisions\n")
 
     # meta paths
     fManager.write("'meta/summa_zTimeMeta.txt'              ! META_TIME = metadata for time\n"
@@ -52,20 +57,20 @@ def fileManager(dirModel, siteID, expName, expID=''):
                    "'meta/summa_zCategoryMeta.txt'          ! META_TYPE = metadata for local classification of veg, soil, etc.\n"
                    "'meta/summa_zForceMeta.txt'             ! META_FORCE = metadata for model forcing variables\n"
                    "'meta/summa_zLocalParamMeta.txt'        ! META_LOCALPARAM  = metadata for local model parameters\n"
-                   "'meta/summa_zLocalModelVarMeta.txt'     ! META_LOCALMVAR  = metadata for local model variables\n"
+                   "'meta/Model_Output.txt'                 ! META_LOCALMVAR  = metadata for local model variables\n"
                    "'meta/summa_zLocalModelIndexMeta.txt'   ! META_INDEX = metadata for model indices\n"
                    "'meta/summa_zBasinParamMeta.txt'        ! META_BASINPARAM = metadata for basin-average model parameters\n"
                    "'meta/summa_zBasinModelVarMeta.txt'     ! META_BASINMVAR = metadata for basin-average model variables\n")
 
     # paths that change for each site
-    fManager.write("'" + dirSettings + "/summa_zLocalAttributes.txt'    ! LOCAL_ATTRIBUTES = local attributes\n"
-                   "'" + dirSettings + "/summa_zLocalParamInfo.txt'     ! LOCALPARAM_INFO = default values and constraints for local model parameters\n"
-                   "'" + dirSettings + "/summa_zBasinParamInfo.txt'     ! BASINPARAM_INFO = default values and constraints for basin-average model parameters\n"
-                   "'" + dirSettings + '/' + fForcingFileList + "'    ! FORCING_FILELIST = list of files used in each HRU\n"
-                   "'" + dirSettings + "/summa_zInitialCond.txt'        ! MODEL_INITCOND = model initial conditions\n")
+    fManager.write("'summa_zLocalAttributes.nc'    ! LOCAL_ATTRIBUTES = local attributes\n"
+                   "'summa_zLocalParamInfo.txt'     ! LOCALPARAM_INFO = default values and constraints for local model parameters\n"
+                   "'summa_zBasinParamInfo.txt'     ! BASINPARAM_INFO = default values and constraints for basin-average model parameters\n"
+                   "'" + fForcingFileList + "'    ! FORCING_FILELIST = list of files used in each HRU\n"
+                   "'summa_zInitialCond.nc'        ! MODEL_INITCOND = model initial conditions\n")
 
     # paths that change for each run
-    fManager.write("'" + dirSettings + '/' + fParamTrial + "'  ! PARAMETER_TRIAL = trial values for model parameters\n")
+    fManager.write("'" + fParamTrial + "'  ! PARAMETER_TRIAL = trial values for model parameters\n")
     fManager.write("'" + expID + "'  ! OUTPUT_PREFIX\n")
 
     # Close file
@@ -311,15 +316,16 @@ def forcingFile(dirModel, siteID, expName, fForceFile,
         "!        --> filename must be in single quotes\n"
         "! ****************************************************************************************************\n")
 
-    if not np.size(fForceFile) == np.size(rangeHRU):
-        raise ValueError('fForceFile and rangeHRU do not contain the same \
-                         number of elements')
-    if np.size(fForceFile) == 1:
-        fForceList.write("   " + str(rangeHRU) + "    " + "'" + fForceFile + "'\n")
-
-    else:
-        for nHRU, fHRU in zip(rangeHRU, fForceFile):
-            fForceList.write("   " + str(nHRU) + "    " + "'" + fHRU + "'\n")
+    # if not np.size(fForceFile) == np.size(rangeHRU):
+    #     raise ValueError('fForceFile and rangeHRU do not contain the same \
+    #                      number of elements')
+    # if np.size(fForceFile) == 1:
+    #     fForceList.write("   " + str(rangeHRU) + "    " + "'" + fForceFile + "'\n")
+    #
+    # else:
+    #     for nHRU, fHRU in zip(rangeHRU, fForceFile):
+    #         fForceList.write("   " + str(nHRU) + "    " + "'" + fHRU + "'\n")
+    fForceList.write("'" + fForceFile + "'\n")
 
     fForceList.close()
 
@@ -404,15 +410,11 @@ def writeDefault(dirModel, siteID, expName):
     # -------------------------------------------------------------------------
     # meta files (why do these need to be included with summa?)
 
-    # File path
-    if dirModel[-1] == '/':
-        pathMeta = dirModel + 'meta'
-    else:
-        pathMeta = dirModel + '/' + 'meta'
-
-    # Open file for reading
-    if not os.path.exists(pathMeta):
-        os.makedirs(pathMeta)
+    pathMeta = checkPath(dirModel + 'settings/', siteID, expName)
+    # Make sure the meta directory exists
+    if not os.path.exists(pathMeta + '/meta/'):
+        os.makedirs(pathMeta + '/meta/')
+        os.chmod(pathMeta, mode=0o777)
 
     # list of all summa/meta/*Meta files to copy
     listMeta = ['summa_zBasinModelVarMeta.txt',
@@ -426,12 +428,34 @@ def writeDefault(dirModel, siteID, expName):
                 'summa_zModelIndexMeta.txt',
                 'summa_zParamMeta.txt',
                 'summa_zTimeMeta.txt',
+                'Model_Output.txt'
                 ]
 
     for m in listMeta:
-        if os.path.isfile(pathMeta + '/' + m):
+        if os.path.isfile(pathMeta + '/meta/' + m):
             continue
         else:
-            shutil.copy(pathPackageGeneric, pathMeta + '/' + m)
+            pathPackageGeneric = os.path.join(dirPackageDefault, 'meta', m)
+            print(pathPackageGeneric)
+            print(pathMeta + '/meta/' + m)
+            shutil.copy(pathPackageGeneric, pathMeta + '/meta/' + m)
+
+    # -------------------------------------------------------------------------
+    # .TBL files
+    pathPackageGeneric = os.path.join(dirPackageDefault, 'settings', 'GENPARM.TBL')
+    pathLocal = checkPath(dirModel + 'settings/', siteID, expName)
+    shutil.copy(pathPackageGeneric, pathLocal + '/GENPARM.TBL')
+
+    pathPackageGeneric = os.path.join(dirPackageDefault, 'settings', 'SOILPARM.TBL')
+    pathLocal = checkPath(dirModel + 'settings/', siteID, expName)
+    shutil.copy(pathPackageGeneric, pathLocal + '/SOILPARM.TBL')
+
+    pathPackageGeneric = os.path.join(dirPackageDefault, 'settings', 'MPTABLE.TBL')
+    pathLocal = checkPath(dirModel + 'settings/', siteID, expName)
+    shutil.copy(pathPackageGeneric, pathLocal + '/MPTABLE.TBL')
+
+    pathPackageGeneric = os.path.join(dirPackageDefault, 'settings', 'VEGPARM.TBL')
+    pathLocal = checkPath(dirModel + 'settings/', siteID, expName)
+    shutil.copy(pathPackageGeneric, pathLocal + '/VEGPARM.TBL')
 
     return
