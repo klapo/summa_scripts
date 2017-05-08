@@ -436,8 +436,6 @@ def writeDefault(dirModel, siteID, expName):
             continue
         else:
             pathPackageGeneric = os.path.join(dirPackageDefault, 'meta', m)
-            print(pathPackageGeneric)
-            print(pathMeta + '/meta/' + m)
             shutil.copy(pathPackageGeneric, pathMeta + '/meta/' + m)
 
     # -------------------------------------------------------------------------
